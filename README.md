@@ -2,7 +2,7 @@
 
 *Read this in other languages: [English](README.en.md)*
 
-- **本示例项目中动态密钥的计算在移动设备上执行，为了安全和避免出错，建议正式环境中在自己的业务服务器计算，参考 [动态密钥鉴权](https://docs.agora.io/cn/2.0.2/product/Voice/Product%20Overview/key) **
+**本示例项目中动态密钥的计算在移动设备上执行，为了安全和避免出错，建议正式环境中在自己的业务服务器计算，参考 [动态密钥鉴权](https://docs.agora.io/cn/2.0.2/product/Voice/Product%20Overview/key)**
 
 这个开源示例项目演示了如何快速集成 Agora 视频 SDK 和信令 SDK，实现1对1视频通话。
 
@@ -29,7 +29,7 @@ static NSString * const kAppCertificate = @"Your App Certificate";
 
 然后在 [Agora.io SDK](https://www.agora.io/cn/download/)
 - 下载 **视频通话 + 直播 SDK**，解压后将其中的 **libs/AgoraRtcEngineKit.framework** 复制到本项目的 “OpenDuo” 文件夹下。
-- 下载 **信令SDK**，解压后将其中的 **framework/AgoraSignalKit.framework** 复制到本项目的 “OpenDuo” 文件夹下。
+- 下载 **信令SDK**，解压后将其中的 **libs/AgoraSigKit.framework** 复制到本项目的 “OpenDuo” 文件夹下。
 
 最后使用 XCode 打开 OpenDuo.xcodeproj，连接 iPhone／iPad 测试设备，设置有效的开发者签名后即可运行。
 
@@ -44,7 +44,7 @@ static NSString * const kAppCertificate = @"Your App Certificate";
 - 如果在集成中遇到问题，你可以到 [开发者社区](https://dev.agora.io/cn/) 提问
 - 如果有售前咨询问题，可以拨打 400 632 6626，或加入官方Q群 12742516 提问
 - 如果需要售后技术支持，你可以在 [Agora Dashboard](https://dashboard.agora.io) 提交工单
-- 如果发现了示例代码的bug，欢迎提交 [issue](https://github.com/AgoraIO/OpenDuo-iOS-Objective-C/issues)
+- 如果发现了示例代码的 bug，欢迎提交 [issue](https://github.com/AgoraIO/OpenDuo-iOS-Objective-C/issues)
 
 ## 代码许可
 
