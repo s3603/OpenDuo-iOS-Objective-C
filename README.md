@@ -28,8 +28,8 @@ static NSString * const kAppCertificate = @"Your App Certificate";
 ```
 
 然后在 [Agora.io SDK](https://www.agora.io/cn/download/)
-下载 **视频通话 + 直播 SDK**，解压后将其中的 **libs/AgoraRtcEngineKit.framework** 复制到本项目的 “OpenDuo” 文件夹下。
-下载 **信令SDK**，解压后将其中的 **framework/AgoraSignalKit.framework** 复制到本项目的 “OpenDuo” 文件夹下。
+- 下载 **视频通话 + 直播 SDK**，解压后将其中的 **libs/AgoraRtcEngineKit.framework** 复制到本项目的 “OpenDuo” 文件夹下。
+- 下载 **信令SDK**，解压后将其中的 **framework/AgoraSignalKit.framework** 复制到本项目的 “OpenDuo” 文件夹下。
 
 最后使用 XCode 打开 OpenDuo.xcodeproj，连接 iPhone／iPad 测试设备，设置有效的开发者签名后即可运行。
 
