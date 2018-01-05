@@ -2,7 +2,7 @@
 
 *其他语言版本： [简体中文](README.md)*
 
-- **In this sample project, the calculation of dynamic key is performed on the mobile device. For security and avoidance of errors, it is recommended to calculate on your own business server. Please refer to [Dynamic Key](https://docs.agora.io/en/2.0.2/product/Voice/Product%20Overview/key) **
+**In this sample project, the calculation of dynamic key is performed on the mobile device. For security and avoidance of errors, it is recommended to calculate on your own business server. Please refer to [Dynamic Key](https://docs.agora.io/en/2.0.2/product/Voice/Product%20Overview/key) **
 
 The Open Duo iOS for Objective C Sample App is an open-source demo that will help you get video chat integrated directly into your iOS applications using the Agora Video SDK and Agora Signaling SDK.
 
@@ -27,7 +27,8 @@ static NSString * const kAppID = @"Your App ID"
 static NSString * const kAppCertificate = @"Your App Certificate";
 ```
 
-Next, download the **Agora Video SDK** from [Agora.io SDK](https://www.agora.io/en/download/). Unzip the downloaded SDK package and copy the **libs/AgoraRtcEngineKit.framework** to the "OpenDuo" folder in project. Download the **Agora Signaling SDK**, unzip the downloaded SDK package and copy the **framework/AgoraSignalKit.framework** to the "OpenDuo" folder in project.
+Next, download the **Agora Video SDK** from [Agora.io SDK](https://www.agora.io/en/download/). Unzip the downloaded SDK package and copy the **libs/AgoraRtcEngineKit.framework** to the "OpenDuo" folder in project. 
+Download the **Agora Signaling SDK**, unzip the downloaded SDK package and copy the **libs/AgoraSigKit.framework** to the "OpenDuo" folder in project.
 
 Finally, Open OpenDuo.xcodeproj, connect your iPhone／iPad device, setup your development signing and run.
 
