@@ -10,7 +10,7 @@
 #import "DialViewController.h"
 #import "AlertUtil.h"
 #import "KeyCenter.h"
-#import <AgoraSignalKit/AgoraSignalKit.h>
+#import <AgoraSigKit/AgoraSigKit.h>
 
 @interface LoginViewController ()
 {

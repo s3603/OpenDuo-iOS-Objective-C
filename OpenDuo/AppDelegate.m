@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import "KeyCenter.h"
-#import <AgoraSignalKit/AgoraSignalKit.h>
+#import <AgoraSigKit/AgoraSigKit.h>
 
 @interface AppDelegate ()
 

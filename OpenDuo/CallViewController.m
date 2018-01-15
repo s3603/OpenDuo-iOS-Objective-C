@@ -9,7 +9,7 @@
 #import "CallViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import <AgoraRtcEngineKit/AgoraRtcEngineKit.h>
-#import <AgoraSignalKit/AgoraSignalKit.h>
+#import <AgoraSigKit/AgoraSigKit.h>
 #import "KeyCenter.h"
 #import "AlertUtil.h"
 #import "NSObject+JSONString.h"
