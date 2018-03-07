@@ -106,19 +106,19 @@
     
     signalEngine.onQueryUserStatusResult = ^(NSString *name, NSString *status) {
         NSLog(@"onQueryUserStatusResult, name: %@, status: %@", name, status);
-        if ([status intValue] == 0) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([status intValue] == 0) {
                 NSString *message = [NSString stringWithFormat:@"%@ is not online", name];
                 [AlertUtil showAlert:message completion:^{
                     [weakSelf dismissViewControllerAnimated:NO completion:nil];
                 }];
-            });
-        }
-        else {
-            [weakSelf loadMediaEngine];
-            [weakSelf startLocalVideo];
-            [weakSelf sendInviteRequest];
-        }
+            }
+            else {
+                [weakSelf loadMediaEngine];
+                [weakSelf startLocalVideo];
+                [weakSelf sendInviteRequest];
+            }
+        });
     };
     
     signalEngine.onInviteReceivedByPeer = ^(NSString* channelID, NSString *account, uint32_t uid) {
@@ -293,14 +293,14 @@
     //[mediaEngine setParameters:@"{\"rtc.log_filter\":65535}"];
     
     [mediaEngine enableVideo];
-    [mediaEngine setVideoProfile:AgoraRtc_VideoProfile_360P swapWidthAndHeight:NO];
+    [mediaEngine setVideoProfile:AgoraVideoProfileLandscape360P swapWidthAndHeight:NO];
 }
 
 - (void)startLocalVideo {
     AgoraRtcVideoCanvas *videoCanvas = [[AgoraRtcVideoCanvas alloc] init];
     videoCanvas.uid = 0;
     videoCanvas.view = self.localVideo;
-    videoCanvas.renderMode = AgoraRtc_Render_Hidden;
+    videoCanvas.renderMode = AgoraVideoRenderModeHidden;
     [mediaEngine setupLocalVideo:videoCanvas];
     [mediaEngine startPreview];
 }
@@ -312,8 +312,8 @@
 
 - (void)joinChannel {
     NSString *key = [KeyCenter generateMediaKey:self.channel uid:self.localUID expiredTime:0];
-    int result = [mediaEngine joinChannelByKey:key channelName:self.channel info:nil uid:self.localUID joinSuccess:nil];
-    if (result != AgoraRtc_Error_NoError) {
+    int result = [mediaEngine joinChannelByToken:key channelId:self.channel info:nil uid:self.localUID joinSuccess:nil];
+    if (result != AgoraEcode_SUCCESS) {
         NSLog(@"Join channel failed: %d", result);
         
         [signalEngine channelInviteEnd:self.channel account:self.remoteAccount uid:0];
@@ -335,11 +335,11 @@
     }
 }
 
-- (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurWarning:(AgoraRtcWarningCode)warningCode {
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurWarning:(AgoraWarningCode)warningCode {
     NSLog(@"rtcEngine:didOccurWarning: %ld", (long)warningCode);
 }
 
-- (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurError:(AgoraRtcErrorCode)errorCode {
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurError:(AgoraErrorCode)errorCode {
     NSLog(@"rtcEngine:didOccurError: %ld", (long)errorCode);
 }
 
@@ -353,11 +353,11 @@
     AgoraRtcVideoCanvas *videoCanvas = [[AgoraRtcVideoCanvas alloc] init];
     videoCanvas.uid = uid;
     videoCanvas.view = self.remoteVideo;
-    videoCanvas.renderMode = AgoraRtc_Render_Hidden;
+    videoCanvas.renderMode = AgoraVideoRenderModeHidden;
     [mediaEngine setupRemoteVideo:videoCanvas];
 }
 
-- (void)rtcEngine:(AgoraRtcEngineKit *)engine didOfflineOfUid:(NSUInteger)uid reason:(AgoraRtcUserOfflineReason)reason {
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine didOfflineOfUid:(NSUInteger)uid reason:(AgoraUserOfflineReason)reason {
     NSLog(@"rtcEngine:didOfflineOfUid: %ld", (long)uid);
     // only receive this callback if remote user logout unexpected
     [self leaveChannel];
