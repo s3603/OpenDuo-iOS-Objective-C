@@ -13,12 +13,12 @@
     if (self = [super init]) {
         self.uid = uid;
         
-        self.hostingView = [[UIView alloc] init];
-        self.hostingView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.userView = [[UserVideoView alloc] initWithName:[NSString stringWithFormat:@"%ld",uid]];
+        self.userView.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.canvas = [[AgoraRtcVideoCanvas alloc] init];
         self.canvas.uid = uid;
-        self.canvas.view = self.hostingView;
+        self.canvas.view = self.userView.hostingView;
         self.canvas.renderMode = AgoraVideoRenderModeHidden;
     }
     return self;

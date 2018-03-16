@@ -26,7 +26,7 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="is being called ..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WZs-GL-QDk">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="is being called ..." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WZs-GL-QDk">
                     <rect key="frame" x="124" y="66.5" width="127.5" height="20.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
@@ -40,6 +40,9 @@
                     </constraints>
                     <state key="normal" backgroundImage="unmute"/>
                     <state key="selected" backgroundImage="mute"/>
+                    <connections>
+                        <action selector="muteButtonClicked:" destination="-1" eventType="touchUpInside" id="Cs3-QA-p0T"/>
+                    </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lGW-dH-zH4" userLabel="switchCameraButton">
                     <rect key="frame" x="300" y="488.5" width="45" height="32"/>
@@ -48,6 +51,9 @@
                         <constraint firstAttribute="width" constant="45" id="xpc-R8-L0X"/>
                     </constraints>
                     <state key="normal" backgroundImage="camera"/>
+                    <connections>
+                        <action selector="switchCameraButtonClicked:" destination="-1" eventType="touchUpInside" id="T6s-1v-KIB"/>
+                    </connections>
                 </button>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="LKI-rh-c9A">
                     <rect key="frame" x="65.5" y="540.5" width="234.5" height="60"/>
@@ -59,6 +65,9 @@
                                 <constraint firstAttribute="height" constant="60" id="M21-F4-89i"/>
                             </constraints>
                             <state key="normal" backgroundImage="hangup"/>
+                            <connections>
+                                <action selector="hangupButtonClicked:" destination="-1" eventType="touchUpInside" id="dkj-Fy-zfr"/>
+                            </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="80S-75-br6">
                             <rect key="frame" x="174.5" y="0.0" width="60" height="60"/>
@@ -67,6 +76,9 @@
                                 <constraint firstAttribute="width" constant="60" id="cvO-DD-zs6"/>
                             </constraints>
                             <state key="normal" backgroundImage="call"/>
+                            <connections>
+                                <action selector="acceptButtonClicked:" destination="-1" eventType="touchUpInside" id="wOg-gk-9dj"/>
+                            </connections>
                         </button>
                     </subviews>
                 </stackView>

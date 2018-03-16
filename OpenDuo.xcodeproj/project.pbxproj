@@ -35,6 +35,7 @@
 		88B7ABAA205A7B870005DE39 /* MultiCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B7ABA8205A7B870005DE39 /* MultiCallViewController.m */; };
 		88B7ABAB205A7B870005DE39 /* MultiCallViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88B7ABA9205A7B870005DE39 /* MultiCallViewController.xib */; };
 		88B7ABAE205A7C1E0005DE39 /* VideoSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B7ABAC205A7C1E0005DE39 /* VideoSession.m */; };
+		88B7ABB1205B949D0005DE39 /* UserVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B7ABB0205B949D0005DE39 /* UserVideoView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +83,8 @@
 		88B7ABA9205A7B870005DE39 /* MultiCallViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MultiCallViewController.xib; sourceTree = "<group>"; };
 		88B7ABAC205A7C1E0005DE39 /* VideoSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoSession.m; sourceTree = "<group>"; };
 		88B7ABAD205A7C1E0005DE39 /* VideoSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoSession.h; sourceTree = "<group>"; };
+		88B7ABAF205B949D0005DE39 /* UserVideoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserVideoView.h; sourceTree = "<group>"; };
+		88B7ABB0205B949D0005DE39 /* UserVideoView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserVideoView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +194,8 @@
 				88B7ABA7205A7B870005DE39 /* MultiCallViewController.h */,
 				88B7ABA8205A7B870005DE39 /* MultiCallViewController.m */,
 				88B7ABA9205A7B870005DE39 /* MultiCallViewController.xib */,
+				88B7ABAF205B949D0005DE39 /* UserVideoView.h */,
+				88B7ABB0205B949D0005DE39 /* UserVideoView.m */,
 			);
 			path = MultiCall;
 			sourceTree = "<group>";
@@ -280,6 +285,7 @@
 				70DA28451FA8455D00A56C64 /* LoginViewController.m in Sources */,
 				88B7ABAE205A7C1E0005DE39 /* VideoSession.m in Sources */,
 				705AF7DC1FAC8C8D002434E7 /* KeyCenter.mm in Sources */,
+				88B7ABB1205B949D0005DE39 /* UserVideoView.m in Sources */,
 				70DA28501FA8455D00A56C64 /* main.m in Sources */,
 				702F6E451FAAC701009413E4 /* NSObject+JSONString.m in Sources */,
 				70DA28721FA86D5400A56C64 /* CallViewController.m in Sources */,

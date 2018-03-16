@@ -24,7 +24,6 @@
 @property (strong, nonatomic) NSMutableArray<VideoSession *> *videoSessions;
 @property (strong, nonatomic) VideoSession *fullSession;
 
-@property (weak, nonatomic) IBOutlet UIView *remoteVideo;
 @property (weak, nonatomic) IBOutlet UIView *localVideo;
 @property (weak, nonatomic) IBOutlet UILabel *callingLabel;
 @property (weak, nonatomic) IBOutlet UIStackView *buttonStackView;
@@ -41,25 +40,27 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self loadSignalEngine];
+    [self loadMediaEngine];
     
+    self.videoSessions = [[NSMutableArray alloc] init];
+
+    [self startLocalVideo];
+
     if (self.initiatorAccount) {
         self.callingLabel.text = [NSString stringWithFormat:@"%@ 接到通话请求 ...", self.initiatorAccount];
-        [self loadMediaEngine];
-        [self startLocalVideo];
         [self playRing:@"ring"];
     }else{
         self.callingLabel.text = [NSString stringWithFormat:@"%@ 发起通话请求 ...", self.remoteUserIdArray];
         self.buttonStackView.axis = UILayoutConstraintAxisVertical;
         [self.acceptButton removeFromSuperview];
+        
+        //
+        self.channel = [NSString stringWithFormat:@"c-%@",self.localAccount];
         // 查询用户在线状态，并发起 通话请求
         for (NSString *account in self.remoteUserIdArray) {
             [signalEngine queryUserStatus:account];
         }
         // 2秒后 或 全部得到结果弹出状态信息
-        
-        // 准备视频
-        [self loadMediaEngine];
-        [self startLocalVideo];
     }
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationWillTerminate:)
@@ -121,21 +122,19 @@
         // called by other
         NSDictionary *extraDic = @{@"status": @(0)};
         [signalEngine channelInviteRefuse:self.channel account:self.initiatorAccount uid:0 extra:[extraDic JSONString]];
-        
-        [self stopRing];
     }
     else {
         // 取消所有 邀请
         [self cancelAllInvite];
-        
-        if (self.callingLabel.hidden) {
-            // already accepted
-            [self leaveChannel];
-        }
-        else {
-            // calling other
-            [self stopRing];
-        }
+    }
+    
+    if (self.callingLabel.hidden) {
+        // already accepted
+        [self leaveChannel];
+    }
+    else {
+        // calling other
+        [self stopRing];
     }
     
     [self dismissViewControllerAnimated:NO completion:nil];
@@ -185,15 +184,6 @@
     [mediaEngine setVideoProfile:AgoraVideoProfileLandscape240P swapWidthAndHeight:NO];
 }
 
-- (void)startLocalVideo {
-    AgoraRtcVideoCanvas *videoCanvas = [[AgoraRtcVideoCanvas alloc] init];
-    videoCanvas.uid = 0;
-    videoCanvas.view = self.localVideo;
-    videoCanvas.renderMode = AgoraVideoRenderModeHidden;
-    [mediaEngine setupLocalVideo:videoCanvas];
-    [mediaEngine startPreview];
-}
-
 - (void)joinChannel {
     NSString *key = [KeyCenter generateMediaKey:self.channel uid:self.localAccount.intValue expiredTime:0];
     int result = [mediaEngine joinChannelByToken:key channelId:self.channel info:nil uid:self.localAccount.intValue joinSuccess:nil];
@@ -221,7 +211,25 @@
 
 -(void)alertUserStatus
 {
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BOOL allOffLine = YES;
+        NSString *message;
+        for (int i=0 ; i<self.remoteUserIdArray.count; i++) {
+            NSString *account = self.remoteUserIdArray[i];
+            if ([self.remoteUserStatus[account] intValue] > 0) {
+                message = [NSString stringWithFormat:@"%@ %@ is online\n", message, account];
+                allOffLine = NO;
+            }else{
+                message = [NSString stringWithFormat:@"%@ %@ is not online\n", message, account];
+            }
+        }
+        
+        [AlertUtil showAlert:message completion:^{
+            if (allOffLine) {
+                [self dismissViewControllerAnimated:NO completion:nil];
+            }
+        }];
+    });
 }
 
 //MARK: - AgoraAPI 监听
@@ -244,21 +252,18 @@
     // 查询用户是否在线
     signalEngine.onQueryUserStatusResult = ^(NSString *name, NSString *status) {
         NSLog(@"onQueryUserStatusResult, name: %@, status: %@", name, status);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([status intValue] == 0) {
-//                NSString *message = [NSString stringWithFormat:@"%@ is not online", name];
-//                [AlertUtil showAlert:message completion:^{
-//                    [weakSelf dismissViewControllerAnimated:NO completion:nil];
-//                }];
-                [weakSelf.remoteUserStatus setObject:@"0" forKey:@"name"];
-            }
-            else {
-                // 发起视频请求
-                [weakSelf.remoteUserStatus setObject:@"1" forKey:@"name"];
-                NSDictionary *extraDic = @{@"_require_peer_online": @(1)};
-                [signalEngine channelInviteUser2:weakSelf.channel account:name extra:[extraDic JSONString]];
-            }
-        });
+        if ([status intValue] == 0) {
+            [weakSelf.remoteUserStatus setObject:@"0" forKey:@"name"];
+        }
+        else {
+            // 发起视频请求
+            [weakSelf.remoteUserStatus setObject:@"1" forKey:@"name"];
+            NSDictionary *extraDic = @{@"_require_peer_online": @(1)};
+            [signalEngine channelInviteUser2:weakSelf.channel account:name extra:[extraDic JSONString]];
+        }
+        if (weakSelf.remoteUserStatus.count == weakSelf.remoteUserIdArray.count) {
+            [weakSelf alertUserStatus];
+        }
     };
     
     // 远端 收到呼叫
@@ -293,7 +298,7 @@
     // 远端接受呼叫
     signalEngine.onInviteAcceptedByPeer = ^(NSString* channelID, NSString *account, uint32_t uid, NSString *extra) {
         NSLog(@"onInviteAcceptedByPeer, channel: %@, account: %@, uid: %u, extra: %@", channelID, account, uid, extra);
-        if (![channelID isEqualToString:weakSelf.channel] || ![account isEqualToString:weakSelf.initiatorAccount]) {
+        if (![channelID isEqualToString:weakSelf.channel]) {
             return;
         }
         
@@ -320,11 +325,11 @@
             if ([dic[@"status"] intValue] == 1) {
                 NSString *message = [NSString stringWithFormat:@"%@ is busy", account];
                 [AlertUtil showAlert:message completion:^{
-                    [weakSelf dismissViewControllerAnimated:NO completion:nil];
+//                    [weakSelf dismissViewControllerAnimated:NO completion:nil];
                 }];
             }
             else {
-                [weakSelf dismissViewControllerAnimated:NO completion:nil];
+//                [weakSelf dismissViewControllerAnimated:NO completion:nil];
             }
         });
     };
@@ -336,11 +341,11 @@
             return;
         }
         
-        dispatch_async(dispatch_get_main_queue(), ^() {
-            [weakSelf stopRing];
-            [weakSelf leaveChannel];
-            [weakSelf dismissViewControllerAnimated:NO completion:nil];
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^() {
+//            [weakSelf stopRing];
+//            [weakSelf leaveChannel];
+//            [weakSelf dismissViewControllerAnimated:NO completion:nil];
+//        });
     };
 }
 
@@ -353,6 +358,12 @@
     NSLog(@"rtcEngine:didOccurError: %ld", (long)errorCode);
 }
 
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine firstLocalVideoFrameWithSize:(CGSize)size elapsed:(NSInteger)elapsed {
+    if (self.videoSessions.count) {
+        [self updateInterface];
+    }
+}
+
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didJoinChannel:(NSString*)channel withUid:(NSUInteger)uid elapsed:(NSInteger) elapsed {
     NSLog(@"rtcEngine:didJoinChannel: %@", channel);
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
@@ -360,18 +371,89 @@
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didJoinedOfUid:(NSUInteger)uid elapsed:(NSInteger)elapsed {
     NSLog(@"rtcEngine:didJoinedOfUid: %ld", (long)uid);
-    AgoraRtcVideoCanvas *videoCanvas = [[AgoraRtcVideoCanvas alloc] init];
-    videoCanvas.uid = uid;
-    videoCanvas.view = self.remoteVideo;
-    videoCanvas.renderMode = AgoraVideoRenderModeHidden;
-    [mediaEngine setupRemoteVideo:videoCanvas];
+    VideoSession *userSession = [self videoSessionOfUid:uid];
+    [mediaEngine setupRemoteVideo:userSession.canvas];
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didOfflineOfUid:(NSUInteger)uid reason:(AgoraUserOfflineReason)reason {
     NSLog(@"rtcEngine:didOfflineOfUid: %ld", (long)uid);
     // only receive this callback if remote user logout unexpected
-    [self leaveChannel];
-    [self dismissViewControllerAnimated:NO completion:nil];
+//    [self leaveChannel];
+//    [self dismissViewControllerAnimated:NO completion:nil];
+    VideoSession *deleteSession;
+    for (VideoSession *session in self.videoSessions) {
+        if (session.uid == uid) {
+            deleteSession = session;
+        }
+    }
+    
+    if (deleteSession) {
+        [self.videoSessions removeObject:deleteSession];
+        [deleteSession.userView removeFromSuperview];
+        [self updateInterface];
+        
+        if (deleteSession == self.fullSession) {
+            self.fullSession = nil;
+        }
+    }
 }
 
+//MARK: - VideoSession
+- (VideoSession *)fetchSessionOfUid:(NSUInteger)uid {
+    for (VideoSession *session in self.videoSessions) {
+        if (session.uid == uid) {
+            return session;
+        }
+    }
+    return nil;
+}
+
+- (VideoSession *)videoSessionOfUid:(NSUInteger)uid {
+    VideoSession *fetchedSession = [self fetchSessionOfUid:uid];
+    if (fetchedSession) {
+        return fetchedSession;
+    } else {
+        VideoSession *newSession = [[VideoSession alloc] initWithUid:uid];
+        [self.videoSessions addObject:newSession];
+        [self updateInterface];
+        return newSession;
+    }
+}
+
+- (void)startLocalVideo {
+    VideoSession *localSession = [[VideoSession alloc] initWithUid:self.localAccount.intValue];
+    [self.videoSessions addObject:localSession];
+    
+    // add userView
+    [self.localVideo addSubview:localSession.userView];
+    localSession.userView.frame = self.localVideo.bounds;
+    
+    [mediaEngine startPreview];
+}
+
+#define kWidth                      [UIScreen mainScreen].bounds.size.width
+#define kHeight                     [UIScreen mainScreen].bounds.size.height
+
+- (void)updateInterface {
+    int i = 0;
+    for (VideoSession *session in self.videoSessions) {
+//        [session.userView removeFromSuperview];
+        int xCount = i%2;
+        int yCount = i/2;
+        int width = kWidth/2-20;
+        session.userView.frame = CGRectMake(20+width*xCount, 64+120*yCount, width, 120);
+        [self.view addSubview:session.userView];
+        i+=1;
+    }
+    
+    for (VideoSession *session in self.videoSessions) {
+        if (session.uid == self.localAccount.intValue) {
+            [mediaEngine setupLocalVideo:session.canvas];
+        }else{
+            [mediaEngine setRemoteVideoStream:session.uid type:AgoraVideoStreamTypeHigh];
+        }
+    }
+    // 判断全屏
+//    [self setStreamTypeForSessions:displaySessions fullSession:self.fullSession];
+}
 @end

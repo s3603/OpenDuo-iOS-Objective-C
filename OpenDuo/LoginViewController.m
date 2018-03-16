@@ -16,7 +16,7 @@
 @interface LoginViewController ()
 {
     AgoraAPI *signalEngine;
-    BOOL isMulti;
+    NSString *multiLocalAccount;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *accountTextField;
@@ -48,7 +48,7 @@
     signalEngine.onLoginSuccess = ^(uint32_t uid, int fd) {
         NSLog(@"Login successfully, uid: %u", uid);
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (isMulti) {
+            if (multiLocalAccount) {
                 [weakSelf pushMultiCall];
             }else{
                 [weakSelf performSegueWithIdentifier:@"ShowDialView" sender:@(uid)];
@@ -79,7 +79,6 @@
 }
 
 - (IBAction)loginButtonClicked:(id)sender {
-    isMulti = NO;
     NSString *account = self.accountTextField.text;
     if (account.length > 0) {
         [self.accountTextField resignFirstResponder];
@@ -103,8 +102,8 @@
 
 -(void)loginWithMulti:(id)sender
 {
-    isMulti = YES;
     NSString *account = [NSString stringWithFormat:@"%ld",(long)[sender tag]];
+    multiLocalAccount = account;
     [signalEngine login:[KeyCenter appId]
                 account:account
                   token:[KeyCenter generateSignalToken:account expiredTime:3600]
@@ -115,7 +114,7 @@
 -(void)pushMultiCall
 {
     ChooseUserViewController *chooseUserVC = [self.storyboard instantiateViewControllerWithIdentifier:@"ChooseUserVC"];
-    chooseUserVC.localAccount = self.accountTextField.text;
+    chooseUserVC.localAccount = multiLocalAccount;
     [self.navigationController presentViewController:chooseUserVC animated:YES completion:nil];
 }
 

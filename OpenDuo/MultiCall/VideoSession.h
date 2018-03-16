@@ -8,11 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <AgoraRtcEngineKit/AgoraRtcEngineKit.h>
+#import "UserVideoView.h"
 
 @interface VideoSession : NSObject
 @property (assign, nonatomic) NSUInteger uid;
-@property (strong, nonatomic) UIView *hostingView;
 @property (strong, nonatomic) AgoraRtcVideoCanvas *canvas;
+@property (strong, nonatomic) UserVideoView *userView;
 
 - (instancetype)initWithUid:(NSUInteger)uid;
 + (instancetype)localSession;
