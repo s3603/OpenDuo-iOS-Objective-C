@@ -29,6 +29,12 @@
 		70DA28721FA86D5400A56C64 /* CallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70DA28711FA86D5400A56C64 /* CallViewController.m */; };
 		70DA28751FA8832D00A56C64 /* CALayer+LayerColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 70DA28741FA8832D00A56C64 /* CALayer+LayerColor.m */; };
 		70E49ED81FA9CD7C0062B0D5 /* AlertUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 70E49ED71FA9CD7C0062B0D5 /* AlertUtil.m */; };
+		88B7AB9D205A5C980005DE39 /* AgoraRtcEngineKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9C205A5C980005DE39 /* AgoraRtcEngineKit.framework */; };
+		88B7AB9F205A5CA80005DE39 /* AgoraSigKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */; };
+		88B7ABA3205A69830005DE39 /* ChooseUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B7ABA2205A69830005DE39 /* ChooseUserViewController.m */; };
+		88B7ABAA205A7B870005DE39 /* MultiCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B7ABA8205A7B870005DE39 /* MultiCallViewController.m */; };
+		88B7ABAB205A7B870005DE39 /* MultiCallViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88B7ABA9205A7B870005DE39 /* MultiCallViewController.xib */; };
+		88B7ABAE205A7C1E0005DE39 /* VideoSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B7ABAC205A7C1E0005DE39 /* VideoSession.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +73,15 @@
 		70DA28741FA8832D00A56C64 /* CALayer+LayerColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CALayer+LayerColor.m"; sourceTree = "<group>"; };
 		70E49ED61FA9CD7C0062B0D5 /* AlertUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertUtil.h; sourceTree = "<group>"; };
 		70E49ED71FA9CD7C0062B0D5 /* AlertUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertUtil.m; sourceTree = "<group>"; };
+		88B7AB9C205A5C980005DE39 /* AgoraRtcEngineKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraRtcEngineKit.framework; sourceTree = "<group>"; };
+		88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraSigKit.framework; sourceTree = "<group>"; };
+		88B7ABA1205A69830005DE39 /* ChooseUserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChooseUserViewController.h; sourceTree = "<group>"; };
+		88B7ABA2205A69830005DE39 /* ChooseUserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChooseUserViewController.m; sourceTree = "<group>"; };
+		88B7ABA7205A7B870005DE39 /* MultiCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiCallViewController.h; sourceTree = "<group>"; };
+		88B7ABA8205A7B870005DE39 /* MultiCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiCallViewController.m; sourceTree = "<group>"; };
+		88B7ABA9205A7B870005DE39 /* MultiCallViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MultiCallViewController.xib; sourceTree = "<group>"; };
+		88B7ABAC205A7C1E0005DE39 /* VideoSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoSession.m; sourceTree = "<group>"; };
+		88B7ABAD205A7C1E0005DE39 /* VideoSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoSession.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88B7AB9D205A5C980005DE39 /* AgoraRtcEngineKit.framework in Frameworks */,
 				70D37E34200BA73A0034E06F /* AgoraSigKit.framework in Frameworks */,
 				7035E92E1FF3C43A00944D2D /* SystemConfiguration.framework in Frameworks */,
 				705AF7D61FAC8B57002434E7 /* AgoraRtcEngineKit.framework in Frameworks */,
@@ -81,6 +97,7 @@
 				70DA28671FA85AA600A56C64 /* VideoToolbox.framework in Frameworks */,
 				70DA28631FA85A7100A56C64 /* AVFoundation.framework in Frameworks */,
 				70DA28651FA85A7D00A56C64 /* libc++.tbd in Frameworks */,
+				88B7AB9F205A5CA80005DE39 /* AgoraSigKit.framework in Frameworks */,
 				70DA28691FA85AE700A56C64 /* libresolv.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -119,6 +136,7 @@
 		70DA283F1FA8455D00A56C64 /* OpenDuo */ = {
 			isa = PBXGroup;
 			children = (
+				88B7ABA0205A65480005DE39 /* MultiCall */,
 				705AF7D71FAC8C8D002434E7 /* KeyCenter */,
 				70DA28401FA8455D00A56C64 /* AppDelegate.h */,
 				70DA28411FA8455D00A56C64 /* AppDelegate.m */,
@@ -148,6 +166,8 @@
 		70DA28561FA84F5A00A56C64 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */,
+				88B7AB9C205A5C980005DE39 /* AgoraRtcEngineKit.framework */,
 				70D37E33200BA73A0034E06F /* AgoraSigKit.framework */,
 				705AF7D41FAC8B57002434E7 /* AgoraRtcEngineKit.framework */,
 				7035E92D1FF3C43A00944D2D /* SystemConfiguration.framework */,
@@ -159,6 +179,20 @@
 				70DA28641FA85A7D00A56C64 /* libc++.tbd */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		88B7ABA0205A65480005DE39 /* MultiCall */ = {
+			isa = PBXGroup;
+			children = (
+				88B7ABAD205A7C1E0005DE39 /* VideoSession.h */,
+				88B7ABAC205A7C1E0005DE39 /* VideoSession.m */,
+				88B7ABA1205A69830005DE39 /* ChooseUserViewController.h */,
+				88B7ABA2205A69830005DE39 /* ChooseUserViewController.m */,
+				88B7ABA7205A7B870005DE39 /* MultiCallViewController.h */,
+				88B7ABA8205A7B870005DE39 /* MultiCallViewController.m */,
+				88B7ABA9205A7B870005DE39 /* MultiCallViewController.xib */,
+			);
+			path = MultiCall;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -228,6 +262,7 @@
 				702F6E561FAB3F52009413E4 /* tones.mp3 in Resources */,
 				70DA284A1FA8455D00A56C64 /* Assets.xcassets in Resources */,
 				702F6E551FAB3F52009413E4 /* ring.mp3 in Resources */,
+				88B7ABAB205A7B870005DE39 /* MultiCallViewController.xib in Resources */,
 				70DA28481FA8455D00A56C64 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -241,11 +276,14 @@
 			files = (
 				70E49ED81FA9CD7C0062B0D5 /* AlertUtil.m in Sources */,
 				70DA286F1FA86D4300A56C64 /* DialViewController.m in Sources */,
+				88B7ABA3205A69830005DE39 /* ChooseUserViewController.m in Sources */,
 				70DA28451FA8455D00A56C64 /* LoginViewController.m in Sources */,
+				88B7ABAE205A7C1E0005DE39 /* VideoSession.m in Sources */,
 				705AF7DC1FAC8C8D002434E7 /* KeyCenter.mm in Sources */,
 				70DA28501FA8455D00A56C64 /* main.m in Sources */,
 				702F6E451FAAC701009413E4 /* NSObject+JSONString.m in Sources */,
 				70DA28721FA86D5400A56C64 /* CallViewController.m in Sources */,
+				88B7ABAA205A7B870005DE39 /* MultiCallViewController.m in Sources */,
 				70DA28421FA8455D00A56C64 /* AppDelegate.m in Sources */,
 				70DA28751FA8832D00A56C64 /* CALayer+LayerColor.m in Sources */,
 			);
@@ -383,11 +421,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 48TB6ZZL5S;
+				DEVELOPMENT_TEAM = 4LHNZSFR95;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OpenDuo",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -399,8 +438,8 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.OpenDuo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "dc253ab3-71e4-40a3-a57c-a3a763407202";
-				PROVISIONING_PROFILE_SPECIFIER = AgoraIODev2017;
+				PROVISIONING_PROFILE = "26e2c149-2e2c-4ea1-b524-f9850bff01de";
+				PROVISIONING_PROFILE_SPECIFIER = "Dev All";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -416,6 +455,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OpenDuo",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

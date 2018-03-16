@@ -7,8 +7,16 @@
 //
 
 #import "ChooseUserViewController.h"
+#import <AgoraSigKit/AgoraSigKit.h>
+#import "KeyCenter.h"
+#import "MultiCallViewController.h"
 
 @interface ChooseUserViewController ()
+{
+    AgoraAPI *signalEngine;
+}
+
+@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttons;
 
 @end
 
@@ -17,6 +25,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self setupButtons];
+    
+    signalEngine = [AgoraAPI getInstanceWithoutMedia:[KeyCenter appId]];
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    __weak typeof(self) weakSelf = self;
+
+    signalEngine.onInviteReceived = ^(NSString* channelID, NSString *account, uint32_t uid, NSString *extra) {
+        NSLog(@"onInviteReceived, channel: %@, account: %@, uid: %u, extra: %@", channelID, account, uid, extra);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf showCallView:channelID remoteAccounts:@[account]];
+        });
+    };
 }
 
 - (void)didReceiveMemoryWarning {
@@ -24,14 +50,43 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+-(void)setupButtons
+{
+    for (int i=0; i<self.buttons.count; i++) {
+        UIButton *button = self.buttons[i];
+        button.tag = 10000+i;
+        [button setTitle:[NSString stringWithFormat:@"选择%d",10000+i] forState:UIControlStateNormal];
+        [button setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        [button setTitle:[NSString stringWithFormat:@"已选择%d",10000+i] forState:UIControlStateSelected];
+//        [button setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
+        [button addTarget:self action:@selector(selectUser:) forControlEvents:UIControlEventTouchUpInside];
+    }
 }
-*/
+
+- (void)selectUser:(UIButton *)sender
+{
+    [sender setSelected:!sender.selected];
+}
+
+- (IBAction)startMultiCall:(id)sender
+{
+    NSMutableArray *arr = [NSMutableArray new];
+    for (UIButton *button in self.buttons) {
+        if (button.isSelected) {
+            NSString *account = [NSString stringWithFormat:@"%ld",(long)[button tag]];
+            [arr addObject:account];
+        }
+    }
+    [self showCallView:nil remoteAccounts:arr];
+
+}
+
+- (void)showCallView:(NSString* )channel remoteAccounts:(NSArray *)accounts {
+    MultiCallViewController *callVC = [[MultiCallViewController alloc] initWithNibName:@"MultiCallViewController" bundle:nil];
+    callVC.localAccount = self.localAccount;
+    callVC.remoteUserIdArray = accounts;
+    callVC.channel = channel;
+    [self presentViewController:callVC animated:NO completion:nil];
+}
 
 @end

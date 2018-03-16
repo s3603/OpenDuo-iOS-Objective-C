@@ -11,13 +11,17 @@
 #import "AlertUtil.h"
 #import "KeyCenter.h"
 #import <AgoraSigKit/AgoraSigKit.h>
+#import "ChooseUserViewController.h"
 
 @interface LoginViewController ()
 {
     AgoraAPI *signalEngine;
+    BOOL isMulti;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *accountTextField;
+
+@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttons;
 
 @end
 
@@ -27,6 +31,8 @@
     [super viewDidLoad];
     
     signalEngine = [AgoraAPI getInstanceWithoutMedia:[KeyCenter appId]];
+    
+    [self setupButtons];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -42,7 +48,11 @@
     signalEngine.onLoginSuccess = ^(uint32_t uid, int fd) {
         NSLog(@"Login successfully, uid: %u", uid);
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf performSegueWithIdentifier:@"ShowDialView" sender:@(uid)];
+            if (isMulti) {
+                [weakSelf pushMultiCall];
+            }else{
+                [weakSelf performSegueWithIdentifier:@"ShowDialView" sender:@(uid)];
+            }
         });
     };
     
@@ -69,6 +79,7 @@
 }
 
 - (IBAction)loginButtonClicked:(id)sender {
+    isMulti = NO;
     NSString *account = self.accountTextField.text;
     if (account.length > 0) {
         [self.accountTextField resignFirstResponder];
@@ -78,6 +89,34 @@
                            uid:0
                       deviceID:nil];
     }
+}
+
+-(void)setupButtons
+{
+    for (int i=0; i<self.buttons.count; i++) {
+        UIButton *button = self.buttons[i];
+        button.tag = 10000+i;
+        [button setTitle:[NSString stringWithFormat:@"登录%d",10000+i] forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(loginWithMulti:) forControlEvents:UIControlEventTouchUpInside];
+    }
+}
+
+-(void)loginWithMulti:(id)sender
+{
+    isMulti = YES;
+    NSString *account = [NSString stringWithFormat:@"%ld",(long)[sender tag]];
+    [signalEngine login:[KeyCenter appId]
+                account:account
+                  token:[KeyCenter generateSignalToken:account expiredTime:3600]
+                    uid:0
+               deviceID:nil];
+}
+
+-(void)pushMultiCall
+{
+    ChooseUserViewController *chooseUserVC = [self.storyboard instantiateViewControllerWithIdentifier:@"ChooseUserVC"];
+    chooseUserVC.localAccount = self.accountTextField.text;
+    [self.navigationController presentViewController:chooseUserVC animated:YES completion:nil];
 }
 
 @end

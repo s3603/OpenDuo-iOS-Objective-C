@@ -11,8 +11,8 @@
 
 #include "DynamicKey4.h"
 
-static NSString * const kAppID = <#Your App ID#>;
-static NSString * const kAppCertificate = <#Your App Certificate#>;
+static NSString * const kAppID = @"d4fa1b6fac604c06a884e7487a9a5f7c";
+static NSString * const kAppCertificate = @"694e40bece15478f930c6f1ac747cc16";
 
 @implementation KeyCenter
 

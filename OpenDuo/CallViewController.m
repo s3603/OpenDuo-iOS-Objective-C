@@ -104,6 +104,7 @@
         }
     };
     
+    // 查询用户是否在线
     signalEngine.onQueryUserStatusResult = ^(NSString *name, NSString *status) {
         NSLog(@"onQueryUserStatusResult, name: %@, status: %@", name, status);
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -121,6 +122,7 @@
         });
     };
     
+    // 远端 收到呼叫
     signalEngine.onInviteReceivedByPeer = ^(NSString* channelID, NSString *account, uint32_t uid) {
         NSLog(@"onInviteReceivedByPeer, channel: %@, account: %@, uid: %u", channelID, account, uid);
         if (![channelID isEqualToString:weakSelf.channel] || ![account isEqualToString:weakSelf.remoteAccount]) {
@@ -132,6 +134,7 @@
         });
     };
     
+    // 呼叫失败
     signalEngine.onInviteFailed = ^(NSString* channelID, NSString* account, uint32_t uid, AgoraEcode ecode, NSString *extra) {
         NSLog(@"Call %@ failed, ecode: %lu", account, (unsigned long)ecode);
         if (![channelID isEqualToString:weakSelf.channel] || ![account isEqualToString:weakSelf.remoteAccount]) {
@@ -147,6 +150,7 @@
         });
     };
     
+    // 远端接受呼叫
     signalEngine.onInviteAcceptedByPeer = ^(NSString* channelID, NSString *account, uint32_t uid, NSString *extra) {
         NSLog(@"onInviteAcceptedByPeer, channel: %@, account: %@, uid: %u, extra: %@", channelID, account, uid, extra);
         if (![channelID isEqualToString:weakSelf.channel] || ![account isEqualToString:weakSelf.remoteAccount]) {
@@ -162,6 +166,7 @@
         });
     };
     
+    // 对方已拒绝呼叫
     signalEngine.onInviteRefusedByPeer = ^(NSString* channelID, NSString *account, uint32_t uid, NSString *extra) {
         NSLog(@"onInviteRefusedByPeer, channel: %@, account: %@, uid: %u, extra: %@", channelID, account, uid, extra);
         if (![channelID isEqualToString:weakSelf.channel] || ![account isEqualToString:weakSelf.remoteAccount]) {
@@ -186,6 +191,7 @@
         });
     };
     
+    // 对方已结束呼叫
     signalEngine.onInviteEndByPeer = ^(NSString* channelID, NSString *account, uint32_t uid, NSString *extra) {
         NSLog(@"onInviteEndByPeer, channel: %@, account: %@, uid: %u, extra: %@", channelID, account, uid, extra);
         if (![channelID isEqualToString:weakSelf.channel] || ![account isEqualToString:weakSelf.remoteAccount]) {
