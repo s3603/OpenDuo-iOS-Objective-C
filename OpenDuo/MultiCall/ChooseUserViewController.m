@@ -84,8 +84,12 @@
 - (void)showCallView:(NSString* )channel remoteAccounts:(NSArray *)accounts {
     MultiCallViewController *callVC = [[MultiCallViewController alloc] initWithNibName:@"MultiCallViewController" bundle:nil];
     callVC.localAccount = self.localAccount;
-    callVC.remoteUserIdArray = accounts;
-    callVC.channel = channel;
+    if (channel) { // 接到通话请求
+        callVC.channel = channel;
+        callVC.initiatorAccount = accounts.firstObject;
+    }else{ // 发起者
+        callVC.remoteUserIdArray = accounts;
+    }
     [self presentViewController:callVC animated:NO completion:nil];
 }
 

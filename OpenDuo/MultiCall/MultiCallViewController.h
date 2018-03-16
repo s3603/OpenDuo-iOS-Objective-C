@@ -12,6 +12,7 @@
 
 @property (copy, nonatomic) NSString *localAccount;
 @property (copy, nonatomic) NSString *channel;
+@property (copy, nonatomic) NSString *initiatorAccount;
 @property (nonatomic, copy) NSArray *remoteUserIdArray;
 
 @end
