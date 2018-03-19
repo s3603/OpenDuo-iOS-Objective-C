@@ -17,4 +17,7 @@
 
 -(instancetype)initWithUid:(NSUInteger)uid;
 
+-(void)changeMicMuteState:(BOOL)mute;
+-(void)changeSpeakState:(BOOL)isSpeaking;
+
 @end

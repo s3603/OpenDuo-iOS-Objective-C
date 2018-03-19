@@ -184,6 +184,8 @@
     
     [mediaEngine enableVideo];
     [mediaEngine setVideoProfile:AgoraVideoProfileLandscape240P swapWidthAndHeight:NO];
+    
+    [mediaEngine enableAudioVolumeIndication:500 smooth:3];
 }
 
 - (void)joinChannel {
@@ -383,6 +385,10 @@
     signalEngine.onMessageChannelReceive = ^(NSString *channelID, NSString *account, uint32_t uid, NSString *msg) {
         NSLog(@"onMessageChannelReceive, channel: %@, account: %@, uid: %u, msg: %@", channelID, account, uid, msg);
     };
+    
+    signalEngine.onMessageSendError = ^(NSString *messageID, AgoraEcode ecode) {
+        NSLog(@"onMessageSendError , messageID: %@ , code: %ld",messageID,ecode);
+    };
 }
 
 //MARK: - AgoraRtcEngineDelegate
@@ -430,6 +436,44 @@
         
         if (deleteSession == self.fullSession) {
             self.fullSession = nil;
+        }
+    }
+}
+
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine
+    didAudioMuted:(BOOL)muted byUid:(NSUInteger)uid
+{
+    VideoSession *fetchedSession = [self fetchSessionOfUid:uid];
+    [fetchedSession.userView changeMicMuteState:muted];
+}
+
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine
+  didVideoEnabled:(BOOL)enabled byUid:(NSUInteger)uid
+{
+    
+}
+
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine reportAudioVolumeIndicationOfSpeakers:
+(NSArray*)speakers totalVolume:(NSInteger)totalVolume
+{
+    for (AgoraRtcAudioVolumeInfo *info in speakers) {
+//        NSLog(@"reportAudioVolumeIndicationOfSpeakers： \n uid: %ld 音量: %ld",info.uid,info.volume);
+    }
+    
+    for (VideoSession *session in self.videoSessions) {
+        BOOL speaking = NO;
+        for (AgoraRtcAudioVolumeInfo *info in speakers) {
+            if (info.uid == session.uid) {
+                if (info.volume > 15) {
+                    speaking = YES;
+                    // 正在发言
+                    [session.userView changeSpeakState:YES];
+                }
+            }
+        }
+        if(!speaking) {
+            // 未发言
+            [session.userView changeSpeakState:NO];
         }
     }
 }

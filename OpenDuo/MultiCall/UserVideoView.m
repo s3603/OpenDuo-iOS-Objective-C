@@ -11,6 +11,8 @@
 @interface UserVideoView()
 
 @property (assign, nonatomic) NSUInteger uid;
+@property (strong, nonatomic) UIImageView *micStateView;
+@property (strong, nonatomic) UIView *speakingPoint;
 
 @end
 
@@ -42,6 +44,17 @@
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped)];
     [self addGestureRecognizer:tap];
+    
+    self.micStateView = [[UIImageView alloc] init];
+    self.micStateView.image = [UIImage imageNamed:@"unmute"];
+    [self addSubview:self.micStateView];
+    
+    self.speakingPoint = [[UIView alloc] init];
+    self.speakingPoint.backgroundColor = [UIColor greenColor];
+    self.speakingPoint.layer.cornerRadius = 7;
+    self.speakingPoint.hidden = YES;
+    [self addSubview:self.speakingPoint];
+
     return self;
 }
 
@@ -51,6 +64,8 @@
     
     self.nameLab.frame = CGRectMake(0, self.frame.size.height/2 - 10, self.frame.size.width, 20);
     self.hostingView.frame = self.bounds;
+    self.micStateView.frame = CGRectMake(5, self.frame.size.height-30, 25, 25);
+    self.speakingPoint.frame = CGRectMake(30, self.frame.size.height-25, 14, 14);
 }
 
 -(void)viewTapped
@@ -58,6 +73,21 @@
     if (self.tapBlock) {
         self.tapBlock(self.uid);
     }
+}
+
+-(void)changeMicMuteState:(BOOL)mute
+{
+    if (mute) {
+        self.micStateView.image = [UIImage imageNamed:@"mute"];
+        [self changeSpeakState:NO];
+    }else{
+        self.micStateView.image = [UIImage imageNamed:@"unmute"];
+    }
+}
+
+-(void)changeSpeakState:(BOOL)isSpeaking
+{
+    [self.speakingPoint setHidden:!isSpeaking];
 }
 
 @end
