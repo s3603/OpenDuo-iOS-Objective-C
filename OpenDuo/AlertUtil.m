@@ -28,6 +28,9 @@
     
     UIViewController *rootVC = [UIApplication sharedApplication].keyWindow.rootViewController;
     UIViewController *topVC = rootVC.presentedViewController ? rootVC.presentedViewController : rootVC;
+    while (topVC.presentedViewController) {
+        topVC = topVC.presentedViewController;
+    }
     [topVC presentViewController:alertController animated:YES completion:nil];
 }
 

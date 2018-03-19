@@ -13,6 +13,8 @@
 @property (strong, nonatomic) UIView *hostingView;
 @property (strong, nonatomic) UILabel *nameLab;
 
--(instancetype)initWithName:(NSString *)name;
+@property(nonatomic, copy) void (^tapBlock)(NSUInteger uid);
+
+-(instancetype)initWithUid:(NSUInteger)uid;
 
 @end

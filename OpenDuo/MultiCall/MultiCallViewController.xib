@@ -18,6 +18,7 @@
                 <outlet property="callingLabel" destination="WZs-GL-QDk" id="ku7-kj-a0y"/>
                 <outlet property="hangupButton" destination="9G2-AE-a8J" id="89f-vU-nem"/>
                 <outlet property="localVideo" destination="HoY-pi-zHM" id="8ZX-Zv-W8x"/>
+                <outlet property="micButton" destination="Ljw-hA-iRQ" id="he8-He-Se3"/>
                 <outlet property="view" destination="RjT-7A-kr8" id="eKM-Fy-bUy"/>
             </connections>
         </placeholder>
@@ -26,7 +27,7 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="is being called ..." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WZs-GL-QDk">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="is being called ..." textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WZs-GL-QDk">
                     <rect key="frame" x="124" y="66.5" width="127.5" height="20.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>

@@ -13,7 +13,7 @@
     if (self = [super init]) {
         self.uid = uid;
         
-        self.userView = [[UserVideoView alloc] initWithName:[NSString stringWithFormat:@"%ld",uid]];
+        self.userView = [[UserVideoView alloc] initWithUid:uid];
         self.userView.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.canvas = [[AgoraRtcVideoCanvas alloc] init];

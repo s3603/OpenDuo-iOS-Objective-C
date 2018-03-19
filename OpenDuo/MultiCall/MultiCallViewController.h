@@ -8,6 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSUInteger, TTDCMDMessageType) {
+   
+    MESSAGE_KICK = 0,
+    
+    MESSAGE_CLOSE_MIC = 1,
+    
+    MESSAGE_CLOSE_VIDEO = 2,
+    
+    MESSAGE_OPEN_VIDEO = 3,
+};
+
+#define CMDKeys @[@"kick",@"closeMic",@"closeVideo",@"openVideo"]
+
 @interface MultiCallViewController : UIViewController
 
 @property (copy, nonatomic) NSString *localAccount;

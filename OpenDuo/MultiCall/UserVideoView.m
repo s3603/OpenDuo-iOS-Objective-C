@@ -8,6 +8,12 @@
 
 #import "UserVideoView.h"
 
+@interface UserVideoView()
+
+@property (assign, nonatomic) NSUInteger uid;
+
+@end
+
 @implementation UserVideoView
 
 /*
@@ -18,10 +24,12 @@
 }
 */
 
--(instancetype)initWithName:(NSString *)name
+-(instancetype)initWithUid:(NSUInteger)uid
 {
     self = [super init];
     
+    self.uid = uid;
+    NSString *name = [NSString stringWithFormat:@"%ld",uid];
     self.nameLab = [[UILabel alloc] init];
     int random = arc4random()%3;
     NSArray *colors = @[[UIColor redColor],[UIColor orangeColor],[UIColor purpleColor]];
@@ -32,6 +40,8 @@
     self.hostingView = [[UIView alloc] init];
     [self addSubview:self.hostingView];
     
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped)];
+    [self addGestureRecognizer:tap];
     return self;
 }
 
@@ -41,6 +51,13 @@
     
     self.nameLab.frame = CGRectMake(0, self.frame.size.height/2 - 10, self.frame.size.width, 20);
     self.hostingView.frame = self.bounds;
+}
+
+-(void)viewTapped
+{
+    if (self.tapBlock) {
+        self.tapBlock(self.uid);
+    }
 }
 
 @end

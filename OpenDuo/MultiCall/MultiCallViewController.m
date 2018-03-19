@@ -29,6 +29,7 @@
 @property (weak, nonatomic) IBOutlet UIStackView *buttonStackView;
 @property (weak, nonatomic) IBOutlet UIButton *hangupButton;
 @property (weak, nonatomic) IBOutlet UIButton *acceptButton;
+@property (weak, nonatomic) IBOutlet UIButton *micButton;
 
 @property (strong, nonatomic) NSMutableDictionary *remoteUserStatus;
 
@@ -47,10 +48,11 @@
     [self startLocalVideo];
 
     if (self.initiatorAccount) {
-        self.callingLabel.text = [NSString stringWithFormat:@"%@ 接到通话请求 ...", self.initiatorAccount];
+        self.callingLabel.text = [NSString stringWithFormat:@" 接到%@的通话请求", self.initiatorAccount];
         [self playRing:@"ring"];
     }else{
-        self.callingLabel.text = [NSString stringWithFormat:@"%@ 发起通话请求 ...", self.remoteUserIdArray];
+        
+        self.callingLabel.text = [NSString stringWithFormat:@"对 %@ 发起通话请求", [self.remoteUserIdArray componentsJoinedByString:@","]];
         self.buttonStackView.axis = UILayoutConstraintAxisVertical;
         [self.acceptButton removeFromSuperview];
         
@@ -347,6 +349,40 @@
 //            [weakSelf dismissViewControllerAnimated:NO completion:nil];
 //        });
     };
+    
+    // 接收点对点消息
+    signalEngine.onMessageInstantReceive = ^(NSString *account, uint32_t uid, NSString *msg) {
+        NSLog(@"onMessageInstantReceive, channel: %@, account: %@, uid: %u, msg: %@", @"", account, uid, msg);
+//        if ([account isEqualToString:weakSelf.localAccount]){
+            TTDCMDMessageType type = [CMDKeys indexOfObject:msg];
+            if (type == MESSAGE_KICK) {
+                [mediaEngine pauseAudioMixing];
+                [AlertUtil showAlert:@"您已被踢出聊天" completion:^{
+//                    [weakSelf dismissViewControllerAnimated:NO completion:nil];
+                    [weakSelf hangupButtonClicked:nil];
+                }];
+            }
+            if (type == MESSAGE_CLOSE_MIC) {
+                [AlertUtil showAlert:@"被管理员 关闭麦克风"];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    weakSelf.micButton.selected = YES;
+                });
+                [mediaEngine muteLocalAudioStream:weakSelf.micButton];
+            }
+            if (type == MESSAGE_OPEN_VIDEO) {
+                [AlertUtil showAlert:@"被管理员 打开摄像头"];
+                [mediaEngine enableVideo];
+            }
+            if (type == MESSAGE_CLOSE_VIDEO) {
+                [AlertUtil showAlert:@"被管理员 关闭摄像头"];
+                [mediaEngine disableVideo];
+            }
+//        }
+    };
+    // 接收频道消息
+    signalEngine.onMessageChannelReceive = ^(NSString *channelID, NSString *account, uint32_t uid, NSString *msg) {
+        NSLog(@"onMessageChannelReceive, channel: %@, account: %@, uid: %u, msg: %@", channelID, account, uid, msg);
+    };
 }
 
 //MARK: - AgoraRtcEngineDelegate
@@ -427,6 +463,9 @@
     // add userView
     [self.localVideo addSubview:localSession.userView];
     localSession.userView.frame = self.localVideo.bounds;
+    [localSession.userView setTapBlock:^(NSUInteger uid) {
+        [self showActionSheet:uid];
+    }];
     
     [mediaEngine startPreview];
 }
@@ -441,8 +480,11 @@
         int xCount = i%2;
         int yCount = i/2;
         int width = kWidth/2-20;
-        session.userView.frame = CGRectMake(20+width*xCount, 64+120*yCount, width, 120);
+        session.userView.frame = CGRectMake(20+width*xCount, 120+120*yCount, width, 120);
         [self.view addSubview:session.userView];
+        [session.userView setTapBlock:^(NSUInteger uid) {
+            [self showActionSheet:uid];
+        }];
         i+=1;
     }
     
@@ -456,4 +498,38 @@
     // 判断全屏
 //    [self setStreamTypeForSessions:displaySessions fullSession:self.fullSession];
 }
+
+-(void)showActionSheet:(NSUInteger)uid
+{
+    UIAlertController *sheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertAction *kick = [UIAlertAction actionWithTitle:@"踢出聊天室" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self sendMessage:@"kick" To:uid];
+    }];
+    UIAlertAction *closeMic = [UIAlertAction actionWithTitle:@"关闭麦克风" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self sendMessage:@"closeMic" To:uid];
+    }];
+    UIAlertAction *closeVideo = [UIAlertAction actionWithTitle:@"关闭视频" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self sendMessage:@"closeVideo" To:uid];
+    }];
+    UIAlertAction *openVideo = [UIAlertAction actionWithTitle:@"打开摄像头" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self sendMessage:@"openVideo" To:uid];
+    }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    [sheet addAction:kick];
+    [sheet addAction:closeMic];
+    [sheet addAction:closeVideo];
+    [sheet addAction:openVideo];
+    [sheet addAction:cancel];
+//    [sheet popoverPresentationController].sourceView = self.popoverSourceView;
+    [sheet popoverPresentationController].permittedArrowDirections = UIPopoverArrowDirectionUp;
+    [self presentViewController:sheet animated:YES completion:nil];
+}
+
+-(void)sendMessage:(NSString *)key To:(NSUInteger)uid
+{
+    NSString *name = [NSString stringWithFormat:@"%ld",uid];
+    [signalEngine messageInstantSend:name uid:uid msg:key msgID:nil];
+    
+}
+
 @end
