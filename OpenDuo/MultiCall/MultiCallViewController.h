@@ -17,9 +17,11 @@ typedef NS_ENUM(NSUInteger, TTDCMDMessageType) {
     MESSAGE_CLOSE_VIDEO = 2,
     
     MESSAGE_OPEN_VIDEO = 3,
+    
+    MESSAGE_OPEN_MIC = 4,
 };
 
-#define CMDKeys @[@"kick",@"closeMic",@"closeVideo",@"openVideo"]
+#define CMDKeys @[@"kick",@"closeMic",@"closeVideo",@"openVideo",@"openMic",@"audience",@"player"]
 
 @interface MultiCallViewController : UIViewController
 

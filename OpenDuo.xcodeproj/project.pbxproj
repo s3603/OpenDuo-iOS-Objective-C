@@ -29,6 +29,10 @@
 		70DA28721FA86D5400A56C64 /* CallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70DA28711FA86D5400A56C64 /* CallViewController.m */; };
 		70DA28751FA8832D00A56C64 /* CALayer+LayerColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 70DA28741FA8832D00A56C64 /* CALayer+LayerColor.m */; };
 		70E49ED81FA9CD7C0062B0D5 /* AlertUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 70E49ED71FA9CD7C0062B0D5 /* AlertUtil.m */; };
+		886E31D4205F9F5600DFB610 /* SelectedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 886E31D2205F9F5600DFB610 /* SelectedUserViewController.m */; };
+		886E31D5205F9F5600DFB610 /* SelectedUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 886E31D3205F9F5600DFB610 /* SelectedUserViewController.xib */; };
+		886E31DA205FA2B300DFB610 /* UserTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 886E31D8205FA2B300DFB610 /* UserTableViewCell.m */; };
+		886E31DB205FA2B300DFB610 /* UserTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 886E31D9205FA2B300DFB610 /* UserTableViewCell.xib */; };
 		88B7AB9D205A5C980005DE39 /* AgoraRtcEngineKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9C205A5C980005DE39 /* AgoraRtcEngineKit.framework */; };
 		88B7AB9F205A5CA80005DE39 /* AgoraSigKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */; };
 		88B7ABA3205A69830005DE39 /* ChooseUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B7ABA2205A69830005DE39 /* ChooseUserViewController.m */; };
@@ -74,6 +78,12 @@
 		70DA28741FA8832D00A56C64 /* CALayer+LayerColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CALayer+LayerColor.m"; sourceTree = "<group>"; };
 		70E49ED61FA9CD7C0062B0D5 /* AlertUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertUtil.h; sourceTree = "<group>"; };
 		70E49ED71FA9CD7C0062B0D5 /* AlertUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertUtil.m; sourceTree = "<group>"; };
+		886E31D1205F9F5600DFB610 /* SelectedUserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SelectedUserViewController.h; sourceTree = "<group>"; };
+		886E31D2205F9F5600DFB610 /* SelectedUserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SelectedUserViewController.m; sourceTree = "<group>"; };
+		886E31D3205F9F5600DFB610 /* SelectedUserViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectedUserViewController.xib; sourceTree = "<group>"; };
+		886E31D7205FA2B300DFB610 /* UserTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserTableViewCell.h; sourceTree = "<group>"; };
+		886E31D8205FA2B300DFB610 /* UserTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserTableViewCell.m; sourceTree = "<group>"; };
+		886E31D9205FA2B300DFB610 /* UserTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UserTableViewCell.xib; sourceTree = "<group>"; };
 		88B7AB9C205A5C980005DE39 /* AgoraRtcEngineKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraRtcEngineKit.framework; sourceTree = "<group>"; };
 		88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraSigKit.framework; sourceTree = "<group>"; };
 		88B7ABA1205A69830005DE39 /* ChooseUserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChooseUserViewController.h; sourceTree = "<group>"; };
@@ -192,9 +202,22 @@
 			path = Catagories;
 			sourceTree = "<group>";
 		};
+		886E31D6205FA29500DFB610 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				88B7ABAF205B949D0005DE39 /* UserVideoView.h */,
+				88B7ABB0205B949D0005DE39 /* UserVideoView.m */,
+				886E31D7205FA2B300DFB610 /* UserTableViewCell.h */,
+				886E31D8205FA2B300DFB610 /* UserTableViewCell.m */,
+				886E31D9205FA2B300DFB610 /* UserTableViewCell.xib */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		88B7ABA0205A65480005DE39 /* MultiCall */ = {
 			isa = PBXGroup;
 			children = (
+				886E31D6205FA29500DFB610 /* Views */,
 				88B7ABAD205A7C1E0005DE39 /* VideoSession.h */,
 				88B7ABAC205A7C1E0005DE39 /* VideoSession.m */,
 				88B7ABA1205A69830005DE39 /* ChooseUserViewController.h */,
@@ -202,8 +225,9 @@
 				88B7ABA7205A7B870005DE39 /* MultiCallViewController.h */,
 				88B7ABA8205A7B870005DE39 /* MultiCallViewController.m */,
 				88B7ABA9205A7B870005DE39 /* MultiCallViewController.xib */,
-				88B7ABAF205B949D0005DE39 /* UserVideoView.h */,
-				88B7ABB0205B949D0005DE39 /* UserVideoView.m */,
+				886E31D1205F9F5600DFB610 /* SelectedUserViewController.h */,
+				886E31D2205F9F5600DFB610 /* SelectedUserViewController.m */,
+				886E31D3205F9F5600DFB610 /* SelectedUserViewController.xib */,
 			);
 			path = MultiCall;
 			sourceTree = "<group>";
@@ -271,12 +295,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				886E31DB205FA2B300DFB610 /* UserTableViewCell.xib in Resources */,
 				70DA284D1FA8455D00A56C64 /* LaunchScreen.storyboard in Resources */,
 				702F6E561FAB3F52009413E4 /* tones.mp3 in Resources */,
 				70DA284A1FA8455D00A56C64 /* Assets.xcassets in Resources */,
 				702F6E551FAB3F52009413E4 /* ring.mp3 in Resources */,
 				88B7ABAB205A7B870005DE39 /* MultiCallViewController.xib in Resources */,
 				70DA28481FA8455D00A56C64 /* Main.storyboard in Resources */,
+				886E31D5205F9F5600DFB610 /* SelectedUserViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,12 +315,14 @@
 			files = (
 				70E49ED81FA9CD7C0062B0D5 /* AlertUtil.m in Sources */,
 				70DA286F1FA86D4300A56C64 /* DialViewController.m in Sources */,
+				886E31DA205FA2B300DFB610 /* UserTableViewCell.m in Sources */,
 				88B7ABA3205A69830005DE39 /* ChooseUserViewController.m in Sources */,
 				70DA28451FA8455D00A56C64 /* LoginViewController.m in Sources */,
 				88B7ABAE205A7C1E0005DE39 /* VideoSession.m in Sources */,
 				705AF7DC1FAC8C8D002434E7 /* KeyCenter.mm in Sources */,
 				88B7ABB1205B949D0005DE39 /* UserVideoView.m in Sources */,
 				70DA28501FA8455D00A56C64 /* main.m in Sources */,
+				886E31D4205F9F5600DFB610 /* SelectedUserViewController.m in Sources */,
 				702F6E451FAAC701009413E4 /* NSObject+JSONString.m in Sources */,
 				70DA28721FA86D5400A56C64 /* CallViewController.m in Sources */,
 				88B7ABAA205A7B870005DE39 /* MultiCallViewController.m in Sources */,

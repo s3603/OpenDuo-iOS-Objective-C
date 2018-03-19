@@ -13,6 +13,7 @@
 #import "KeyCenter.h"
 #import "AlertUtil.h"
 #import "NSObject+JSONString.h"
+#import "SelectedUserViewController.h"
 
 @interface MultiCallViewController () <AgoraRtcEngineDelegate>
 {
@@ -74,6 +75,13 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self loadSignalEngine];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -236,6 +244,13 @@
     });
 }
 
+- (IBAction)addUserButtonClicked:(id)sender
+{
+    SelectedUserViewController *selectUserVC = [[SelectedUserViewController alloc] initWithNibName:@"SelectedUserViewController" bundle:nil];
+    selectUserVC.channelId = self.channel;
+    [self presentViewController:selectUserVC animated:YES completion:nil ];
+}
+
 //MARK: - AgoraAPI 监听
 - (void)loadSignalEngine {
     signalEngine = [AgoraAPI getInstanceWithoutMedia:[KeyCenter appId]];
@@ -273,7 +288,7 @@
     // 远端 收到呼叫
     signalEngine.onInviteReceivedByPeer = ^(NSString* channelID, NSString *account, uint32_t uid) {
         NSLog(@"onInviteReceivedByPeer, channel: %@, account: %@, uid: %u", channelID, account, uid);
-        if (![channelID isEqualToString:weakSelf.channel] || ![account isEqualToString:weakSelf.initiatorAccount]) {
+        if (![channelID isEqualToString:weakSelf.channel]) {
             // 不是当前房间的 邀请
             return;
         }
@@ -368,8 +383,8 @@
                 [AlertUtil showAlert:@"被管理员 关闭麦克风"];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     weakSelf.micButton.selected = YES;
+                    [mediaEngine muteLocalAudioStream:weakSelf.micButton];
                 });
-                [mediaEngine muteLocalAudioStream:weakSelf.micButton];
             }
             if (type == MESSAGE_OPEN_VIDEO) {
                 [AlertUtil showAlert:@"被管理员 打开摄像头"];
@@ -379,6 +394,13 @@
                 [AlertUtil showAlert:@"被管理员 关闭摄像头"];
                 [mediaEngine disableVideo];
             }
+        if (type == MESSAGE_OPEN_MIC) {
+            [AlertUtil showAlert:@"被管理员 打开麦克风"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                weakSelf.micButton.selected = NO;
+                [mediaEngine muteLocalAudioStream:weakSelf.micButton];
+            });
+        }
 //        }
     };
     // 接收频道消息
@@ -558,11 +580,16 @@
     UIAlertAction *openVideo = [UIAlertAction actionWithTitle:@"打开摄像头" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self sendMessage:@"openVideo" To:uid];
     }];
+    UIAlertAction *openMic = [UIAlertAction actionWithTitle:@"打开麦克风" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self sendMessage:@"openMic" To:uid];
+    }];
+    
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
     [sheet addAction:kick];
     [sheet addAction:closeMic];
     [sheet addAction:closeVideo];
     [sheet addAction:openVideo];
+    [sheet addAction:openMic];
     [sheet addAction:cancel];
 //    [sheet popoverPresentationController].sourceView = self.popoverSourceView;
     [sheet popoverPresentationController].permittedArrowDirections = UIPopoverArrowDirectionUp;
