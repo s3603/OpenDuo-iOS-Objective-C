@@ -12,11 +12,11 @@
 #import "KeyCenter.h"
 #import <AgoraSigKit/AgoraSigKit.h>
 #import "ChooseUserViewController.h"
+#import "TTDCallClient.h"
 
 @interface LoginViewController ()
 {
     AgoraAPI *signalEngine;
-    NSString *multiLocalAccount;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *accountTextField;
@@ -42,26 +42,6 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    __weak typeof(self) weakSelf = self;
-    
-    signalEngine.onLoginSuccess = ^(uint32_t uid, int fd) {
-        NSLog(@"Login successfully, uid: %u", uid);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (multiLocalAccount) {
-                [weakSelf pushMultiCall];
-            }else{
-                [weakSelf performSegueWithIdentifier:@"ShowDialView" sender:@(uid)];
-            }
-        });
-    };
-    
-    signalEngine.onLoginFailed = ^(AgoraEcode ecode) {
-        NSLog(@"Login failed, error: %lu", (unsigned long)ecode);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [AlertUtil showAlert:@"Login failed"];
-        });
-    };
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -85,7 +65,7 @@
         [signalEngine login:[KeyCenter appId]
                        account:account
                          token:[KeyCenter generateSignalToken:account expiredTime:3600]
-                           uid:0
+                           uid:account.intValue
                       deviceID:nil];
     }
 }
@@ -103,19 +83,19 @@
 -(void)loginWithMulti:(id)sender
 {
     NSString *account = [NSString stringWithFormat:@"%ld",(long)[sender tag]];
-    multiLocalAccount = account;
-    [signalEngine login:[KeyCenter appId]
-                account:account
-                  token:[KeyCenter generateSignalToken:account expiredTime:3600]
-                    uid:0
-               deviceID:nil];
+    [[TTDCallClient sharedTTDCallClient] loginWithAccount:account Success:^(uint32_t uid, int errorCode) {
+        if (!errorCode) {
+            [self pushMultiCall];
+        }
+    }];
 }
 
 -(void)pushMultiCall
 {
     ChooseUserViewController *chooseUserVC = [self.storyboard instantiateViewControllerWithIdentifier:@"ChooseUserVC"];
-    chooseUserVC.localAccount = multiLocalAccount;
-    [self.navigationController presentViewController:chooseUserVC animated:YES completion:nil];
+    dispatch_async_main_safe(^{
+        [self.navigationController presentViewController:chooseUserVC animated:YES completion:nil];
+    });
 }
 
 @end

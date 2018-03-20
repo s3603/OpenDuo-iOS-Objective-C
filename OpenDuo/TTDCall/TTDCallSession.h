@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "RCCallCommonDefine.h"
 #import <UIKit/UIKit.h>
+#import "VideoSession.h"
 
 /*!
  通话状态变化的监听器
@@ -16,6 +17,8 @@
 @protocol RCCallSessionDelegate <NSObject>
 
 @optional
+
+- (void)updateInterface:(NSArray<VideoSession *> *)videoSessions;
 
 /*!
  通话已接通
@@ -122,9 +125,9 @@
 @property(nonatomic, assign) int conversationType;
 
 /*!
- 通话ID
+ 通话频道
  */
-@property(nonatomic, strong) NSString *callId;
+@property(nonatomic, strong) NSString *channel;
 
 /*!
  通话的目标会话ID
@@ -153,6 +156,16 @@
 
 
 /*!
+ 通话的最初发起人
+ */
+@property(nonatomic, strong) NSString *caller;
+
+/*!
+ 邀请当前用户加入通话的邀请者
+ */
+@property(nonatomic, strong) NSString *inviter;
+
+/*!
  通话接通时间
  */
 @property(nonatomic, assign) long long connectedTime;
@@ -168,9 +181,6 @@
  @param delegate 通话状态变化的监听器
  */
 - (void)setDelegate:(id<RCCallSessionDelegate>)delegate;
-
-
--(void)startCall;
 
 /*!
  接听来电
@@ -190,7 +200,7 @@
  @param userId 用户ID（自己或他人）
  @param view   视频的View
  */
-- (void)setVideoView:(UIView *)view userId:(NSString *)userId;
+- (void)setVideoView:(UIView *)view userId:(int)userId;
 
 /*!
  更换自己使用的媒体类型

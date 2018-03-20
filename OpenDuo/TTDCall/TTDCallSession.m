@@ -12,10 +12,12 @@
 #import "VideoSession.h"
 #import <AgoraRtcEngineKit/AgoraRtcEngineKit.h>
 #import <AgoraSigKit/AgoraSigKit.h>
+#import "AlertUtil.h"
 
 @interface TTDCallSession () <AgoraRtcEngineDelegate>
 {
     AgoraRtcEngineKit *mediaEngine;
+    AgoraAPI *signalEngine;
 }
 
 @property (weak, nonatomic) id<RCCallSessionDelegate> sessionDelegate;
@@ -36,6 +38,19 @@
 -(void)initAgoraSDK
 {
     mediaEngine = [AgoraRtcEngineKit sharedEngineWithAppId:[KeyCenter appId] delegate:self];
+    signalEngine = [AgoraAPI getInstanceWithoutMedia:[KeyCenter appId]];
+
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd ah-mm-ss"];
+    NSString *logFilePath = [NSString stringWithFormat:@"%@/AgoraRtcEngine %@.log",
+                             NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES).firstObject,
+                             [dateFormatter stringFromDate:[NSDate date]]];
+    [mediaEngine setLogFile:logFilePath];
+    //[mediaEngine setParameters:@"{\"rtc.log_filter\":65535}"];
+    
+    [mediaEngine enableVideo];
+    [mediaEngine setVideoProfile:AgoraVideoProfileLandscape240P swapWidthAndHeight:NO];
+    [mediaEngine enableAudioVolumeIndication:500 smooth:3];
 }
 
 -(void)setDelegate:(id<RCCallSessionDelegate>)delegate
@@ -43,52 +58,31 @@
     self.sessionDelegate = delegate;
 }
 
--(void)startCall
-{
-    [mediaEngine setChannelProfile:AgoraChannelProfileLiveBroadcasting];
-    [mediaEngine enableVideo];
-    [mediaEngine setClientRole:AgoraClientRoleBroadcaster];
-    [mediaEngine setVideoProfile:AgoraVideoProfilePortrait240P swapWidthAndHeight:NO];
-
-    int userId = 111;
-    int code = 0; //[mediaEngine joinChannelByKey:nil channelName:@"10006" info:nil uid:userId joinSuccess:nil];
-    if (code != 0) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"%@",[NSString stringWithFormat:@"Join channel failed: %d", code]);
-        });
-    }else{
-        NSLog(@"%@",[NSString stringWithFormat:@"Join channel %@", self.targetId]);
-        self.callStatus = RCCallDialing;
-    }
-}
-
 -(void)accept:(RCCallMediaType)type
 {
-    [mediaEngine setChannelProfile:AgoraChannelProfileLiveBroadcasting];
-    if (type == RCCallMediaVideo) {
-        [mediaEngine enableVideo];
-    }
-    [mediaEngine setClientRole:AgoraClientRoleBroadcaster];
-    [mediaEngine setVideoProfile:AgoraVideoProfilePortrait240P swapWidthAndHeight:NO];
-    
-    [[TTDCallClient sharedTTDCallClient] sendCallMessageWithKey:@"接受" success:^(long messageId) {
-        [self joinCall];
-    }];
-
+    [self joinCall];
+//    [[TTDCallClient sharedTTDCallClient] sendCallMessageWithKey:@"接受" success:^(long messageId) {
+//    }];
 }
+
 -(void)joinCall
 {
-//    int userId = [[TTDIMDataSource shareInstance].loginUserTest intValue];
-//    int code = [mediaEngine joinChannelByKey:nil channelName:@"10006" info:nil uid:userId joinSuccess:nil];
-//    if (code != 0) {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            NSLog(@"%@",[NSString stringWithFormat:@"Join channel failed: %d", code]);
-//        });
-//    }else{
-//        NSLog(@"%@",[NSString stringWithFormat:@"Join channel %@", self.targetId]);
-//        self.callStatus = RCCallActive;
-//        [_sessionDelegate callDidConnect];
-//    }
+    [signalEngine channelInviteAccept:self.channel account:self.inviter uid:0];
+
+    int uid = [TTDCallClient sharedTTDCallClient].uid;
+    NSString *key = [KeyCenter generateMediaKey:self.channel uid:uid expiredTime:0];
+    int result = [mediaEngine joinChannelByToken:key channelId:self.channel info:nil uid:uid joinSuccess:nil];
+    if (result != AgoraEcode_SUCCESS) {
+        NSLog(@"Join channel failed: %d", result);
+        [signalEngine channelInviteEnd:self.channel account:self.inviter uid:0];
+        
+        __weak typeof(self) weakSelf = self;
+        [AlertUtil showAlert:[NSString stringWithFormat:@"Join channel failed"] completion:^{
+//            [weakSelf dismissViewControllerAnimated:NO completion:nil];
+        }];
+    }else{
+        [_sessionDelegate callDidConnect];
+    }
 }
 
 -(void)hangup
@@ -137,22 +131,22 @@
     return YES;
 }
 
--(void)setVideoView:(UIView *)view userId:(NSString *)userId
+-(void)setVideoView:(UIView *)view userId:(int)userId
 {
-    int loginUserId = 111;
+    int loginUserId = [TTDCallClient sharedTTDCallClient].uid;
     
     if (view) {
-        if (loginUserId == [userId intValue]) {
+        if (loginUserId == userId) {
             VideoSession *localSession = [VideoSession localSession];
             localSession.canvas.view = view;
             [mediaEngine setupLocalVideo:localSession.canvas];
         }else{
-            VideoSession *userSession = [self videoSessionOfUid:[userId intValue]];
+            VideoSession *userSession = [self videoSessionOfUid:userId];
             userSession.canvas.view = view;
             [mediaEngine setupRemoteVideo:userSession.canvas];
         }
     }else{
-        if (loginUserId == [userId intValue]) {
+        if (loginUserId == userId) {
             [mediaEngine setupLocalVideo:nil];
         }else{
             [mediaEngine setupRemoteVideo:nil];
@@ -184,12 +178,32 @@
 
 
 #pragma mark - AgoraRtcEngineDelegate
-- (void)rtcEngine:(AgoraRtcEngineKit * _Nonnull)engine didOccurWarning:(AgoraWarningCode)warningCode {
+
+//MARK: - AgoraRtcEngineDelegate
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurWarning:(AgoraWarningCode)warningCode {
     NSLog(@"rtcEngine:didOccurWarning: %ld", (long)warningCode);
+    static int count = 0;
+    if (warningCode == 104) {
+        count ++;
+    }
+    if (count == 10) {
+//        [self leaveChannel];
+    }
 }
 
-- (void)rtcEngine:(AgoraRtcEngineKit * _Nonnull)engine didOccurError:(AgoraErrorCode)errorCode {
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurError:(AgoraErrorCode)errorCode {
     NSLog(@"rtcEngine:didOccurError: %ld", (long)errorCode);
+}
+
+-(void)rtcEngine:(AgoraRtcEngineKit *)engine didLeaveChannelWithStats:(AgoraChannelStats *)stats
+{
+    NSLog(@"rtcEngine:didLeaveChannelWithStats: %ld", (long)stats);
+}
+
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine firstLocalVideoFrameWithSize:(CGSize)size elapsed:(NSInteger)elapsed {
+    if (self.videoSessions.count) {
+        [self.sessionDelegate updateInterface:self.videoSessions];
+    }
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didJoinChannel:(NSString*)channel withUid:(NSUInteger)uid elapsed:(NSInteger) elapsed {
@@ -199,24 +213,73 @@
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didJoinedOfUid:(NSUInteger)uid elapsed:(NSInteger)elapsed {
     NSLog(@"rtcEngine:didJoinedOfUid: %ld", (long)uid);
-    [_sessionDelegate remoteUserDidJoin:[NSString stringWithFormat:@"%d",uid] mediaType:RCCallMediaVideo];
+    VideoSession *userSession = [self videoSessionOfUid:uid];
+    [mediaEngine setupRemoteVideo:userSession.canvas];
+//    [_sessionDelegate remoteUserDidJoin:[NSString stringWithFormat:@"%d",uid] mediaType:RCCallMediaVideo];
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didOfflineOfUid:(NSUInteger)uid reason:(AgoraUserOfflineReason)reason {
     NSLog(@"rtcEngine:didOfflineOfUid: %ld", (long)uid);
     // only receive this callback if remote user logout unexpected
-//    [self leaveChannel];
-//    [self dismissViewControllerAnimated:NO completion:nil];
+    //    [self leaveChannel];
+    //    [self dismissViewControllerAnimated:NO completion:nil];
+    VideoSession *deleteSession;
+    for (VideoSession *session in self.videoSessions) {
+        if (session.uid == uid) {
+            deleteSession = session;
+        }
+    }
+    
+    if (deleteSession) {
+        [self.videoSessions removeObject:deleteSession];
+        [deleteSession.userView removeFromSuperview];
+        [self.sessionDelegate updateInterface:self.videoSessions];
+
+        if (deleteSession == self.fullSession) {
+            self.fullSession = nil;
+        }
+    }
+}
+
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine
+    didAudioMuted:(BOOL)muted byUid:(NSUInteger)uid
+{
+    VideoSession *fetchedSession = [self fetchSessionOfUid:uid];
+    [fetchedSession.userView changeMicMuteState:muted];
+}
+
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine
+  didVideoEnabled:(BOOL)enabled byUid:(NSUInteger)uid
+{
+    
+}
+
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine reportAudioVolumeIndicationOfSpeakers:
+(NSArray*)speakers totalVolume:(NSInteger)totalVolume
+{
+    for (AgoraRtcAudioVolumeInfo *info in speakers) {
+//        NSLog(@"reportAudioVolumeIndicationOfSpeakers： \n uid: %ld 音量: %ld",info.uid,info.volume);
+    }
+    
+    for (VideoSession *session in self.videoSessions) {
+        BOOL speaking = NO;
+        for (AgoraRtcAudioVolumeInfo *info in speakers) {
+            if (info.uid == session.uid) {
+                if (info.volume > 15) {
+                    speaking = YES;
+                    // 正在发言
+                    [session.userView changeSpeakState:YES];
+                }
+            }
+        }
+        if(!speaking) {
+            // 未发言
+            [session.userView changeSpeakState:NO];
+        }
+    }
 }
 
 //MARK: - VideoSession
-
-- (void)addLocalSession {
-    VideoSession *localSession = [VideoSession localSession];
-    [self.videoSessions addObject:localSession];
-    [mediaEngine setupLocalVideo:localSession.canvas];
-}
-
 - (VideoSession *)fetchSessionOfUid:(NSUInteger)uid {
     for (VideoSession *session in self.videoSessions) {
         if (session.uid == uid) {
@@ -233,8 +296,23 @@
     } else {
         VideoSession *newSession = [[VideoSession alloc] initWithUid:uid];
         [self.videoSessions addObject:newSession];
+        [self.sessionDelegate updateInterface:self.videoSessions];
         return newSession;
     }
+}
+
+- (void)startLocalVideo {
+//    VideoSession *localSession = [[VideoSession alloc] initWithUid:self.localAccount.intValue];
+//    [self.videoSessions addObject:localSession];
+    
+    // add userView
+//    [self.localVideo addSubview:localSession.userView];
+//    localSession.userView.frame = self.localVideo.bounds;
+//    [localSession.userView setTapBlock:^(NSUInteger uid) {
+//        [self showActionSheet:uid];
+//    }];
+    
+    [mediaEngine startPreview];
 }
 
 @end

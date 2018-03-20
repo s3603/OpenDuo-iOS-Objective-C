@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TTDCallSession.h"
 
 typedef NS_ENUM(NSUInteger, TTDCMDMessageType) {
    
@@ -25,9 +26,12 @@ typedef NS_ENUM(NSUInteger, TTDCMDMessageType) {
 
 @interface MultiCallViewController : UIViewController
 
-@property (copy, nonatomic) NSString *localAccount;
-@property (copy, nonatomic) NSString *channel;
-@property (copy, nonatomic) NSString *initiatorAccount;
-@property (nonatomic, copy) NSArray *remoteUserIdArray;
+/*!
+ 通话实体
+ */
+@property(nonatomic, strong) TTDCallSession *callSession;
+
+- (void)startCallTo:(NSArray *)userIdList;
+- (void)showWithCall:(TTDCallSession *)callSession;
 
 @end

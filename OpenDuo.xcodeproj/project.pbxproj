@@ -35,6 +35,7 @@
 		886E31DB205FA2B300DFB610 /* UserTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 886E31D9205FA2B300DFB610 /* UserTableViewCell.xib */; };
 		886E31E12060AEC200DFB610 /* TTDCallClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 886E31DD2060AEC100DFB610 /* TTDCallClient.m */; };
 		886E31E22060AEC200DFB610 /* TTDCallSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 886E31E02060AEC200DFB610 /* TTDCallSession.m */; };
+		886E31E62060F7D100DFB610 /* AppViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 886E31E52060F7D100DFB610 /* AppViewManager.m */; };
 		88B7AB9D205A5C980005DE39 /* AgoraRtcEngineKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9C205A5C980005DE39 /* AgoraRtcEngineKit.framework */; };
 		88B7AB9F205A5CA80005DE39 /* AgoraSigKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */; };
 		88B7ABA3205A69830005DE39 /* ChooseUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B7ABA2205A69830005DE39 /* ChooseUserViewController.m */; };
@@ -91,6 +92,8 @@
 		886E31DF2060AEC200DFB610 /* TTDCallSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTDCallSession.h; sourceTree = "<group>"; };
 		886E31E02060AEC200DFB610 /* TTDCallSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTDCallSession.m; sourceTree = "<group>"; };
 		886E31E32060AED300DFB610 /* RCCallCommonDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCCallCommonDefine.h; sourceTree = "<group>"; };
+		886E31E42060F7D100DFB610 /* AppViewManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppViewManager.h; sourceTree = "<group>"; };
+		886E31E52060F7D100DFB610 /* AppViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppViewManager.m; sourceTree = "<group>"; };
 		88B7AB9C205A5C980005DE39 /* AgoraRtcEngineKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraRtcEngineKit.framework; sourceTree = "<group>"; };
 		88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraSigKit.framework; sourceTree = "<group>"; };
 		88B7ABA1205A69830005DE39 /* ChooseUserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChooseUserViewController.h; sourceTree = "<group>"; };
@@ -230,6 +233,8 @@
 				886E31DD2060AEC100DFB610 /* TTDCallClient.m */,
 				886E31DF2060AEC200DFB610 /* TTDCallSession.h */,
 				886E31E02060AEC200DFB610 /* TTDCallSession.m */,
+				886E31E42060F7D100DFB610 /* AppViewManager.h */,
+				886E31E52060F7D100DFB610 /* AppViewManager.m */,
 			);
 			path = TTDCall;
 			sourceTree = "<group>";
@@ -343,6 +348,7 @@
 				88B7ABAE205A7C1E0005DE39 /* VideoSession.m in Sources */,
 				705AF7DC1FAC8C8D002434E7 /* KeyCenter.mm in Sources */,
 				88B7ABB1205B949D0005DE39 /* UserVideoView.m in Sources */,
+				886E31E62060F7D100DFB610 /* AppViewManager.m in Sources */,
 				70DA28501FA8455D00A56C64 /* main.m in Sources */,
 				886E31D4205F9F5600DFB610 /* SelectedUserViewController.m in Sources */,
 				702F6E451FAAC701009413E4 /* NSObject+JSONString.m in Sources */,

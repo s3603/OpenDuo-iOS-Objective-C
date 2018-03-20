@@ -9,50 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "TTDCallSession.h"
 
-@protocol RCCallReceiveDelegate <NSObject>
-
-/*!
- 接收到通话呼入的回调
- 
- @param callSession 呼入的通话实体
- */
-- (void)didReceiveCall:(TTDCallSession *)callSession;
-
-/*!
- 接收到通话呼入的远程通知的回调
- 
- @param callId        呼入通话的唯一值
- @param inviterUserId 通话邀请者的UserId
- @param mediaType     通话的媒体类型
- @param userIdList    被邀请者的UserId列表
- @param userDict      远程推送包含的其他扩展信息
- */
-- (void)didReceiveCallRemoteNotification:(NSString *)callId
-                           inviterUserId:(NSString *)inviterUserId
-                               mediaType:(RCCallMediaType)mediaType
-                              userIdList:(NSArray *)userIdList
-                                userDict:(NSDictionary *)userDict;
-
-/*!
- 接收到取消通话的远程通知的回调
- 
- @param callId        呼入通话的唯一值
- @param inviterUserId 通话邀请者的UserId
- @param mediaType     通话的媒体类型
- @param userIdList    被邀请者的UserId列表
- */
-- (void)didCancelCallRemoteNotification:(NSString *)callId
-                          inviterUserId:(NSString *)inviterUserId
-                              mediaType:(RCCallMediaType)mediaType
-                             userIdList:(NSArray *)userIdList;
-
-@end
-
 @interface TTDCallClient : NSObject
 
 @property(nonatomic, strong) TTDCallSession *currentCallSession;
+@property(nonatomic, assign) NSUInteger uid;
 
 + (instancetype)sharedTTDCallClient;
+
+-(NSString *)localAccount;
 
 /*!
  发起一个通话
@@ -73,9 +37,7 @@
              sessionDelegate:(id<RCCallSessionDelegate>)delegate
                        extra:(NSString *)extra;
 
--(TTDCallSession *)receiveCall:(int)conversationType targetId:(NSString *)targetId to:(NSArray *)userIdList mediaType:(RCCallMediaType)type ;
-
-- (void)dismissCallViewController:(UIViewController *)viewController;
-
 - (void)sendCallMessageWithKey:(NSString *)key success:(void (^)(long messageId))successBlock;
+
+- (void)loginWithAccount:(NSString *)account Success:(void(^)(uint32_t uid,int errorCode))success;
 @end

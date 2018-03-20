@@ -10,10 +10,10 @@
 #import <AgoraSigKit/AgoraSigKit.h>
 #import "KeyCenter.h"
 #import "MultiCallViewController.h"
+#import "TTDCallClient.h"
 
 @interface ChooseUserViewController ()
 {
-    AgoraAPI *signalEngine;
 }
 
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttons;
@@ -26,23 +26,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self setupButtons];
-    
-    signalEngine = [AgoraAPI getInstanceWithoutMedia:[KeyCenter appId]];
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    __weak typeof(self) weakSelf = self;
-
-    signalEngine.onInviteReceived = ^(NSString* channelID, NSString *account, uint32_t uid, NSString *extra) {
-        NSLog(@"onInviteReceived, channel: %@, account: %@, uid: %u, extra: %@", channelID, account, uid, extra);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf showCallView:channelID remoteAccounts:@[account]];
-        });
-    };
 }
 
 - (void)didReceiveMemoryWarning {
@@ -82,14 +70,9 @@
 }
 
 - (void)showCallView:(NSString* )channel remoteAccounts:(NSArray *)accounts {
+    
     MultiCallViewController *callVC = [[MultiCallViewController alloc] initWithNibName:@"MultiCallViewController" bundle:nil];
-    callVC.localAccount = self.localAccount;
-    if (channel) { // 接到通话请求
-        callVC.channel = channel;
-        callVC.initiatorAccount = accounts.firstObject;
-    }else{ // 发起者
-        callVC.remoteUserIdArray = accounts;
-    }
+    [callVC startCallTo:accounts];
     [self presentViewController:callVC animated:NO completion:nil];
 }
 

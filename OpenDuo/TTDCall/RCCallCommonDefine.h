@@ -9,6 +9,22 @@
 #ifndef RCCallCommonDefine_h
 #define RCCallCommonDefine_h
 
+
+/*dispatch宏定义*/
+#define dispatch_sync_main_safe(block)\
+if ([NSThread isMainThread]) {\
+block();\
+} else {\
+dispatch_sync(dispatch_get_main_queue(), block);\
+}
+
+#define dispatch_async_main_safe(block)\
+if ([NSThread isMainThread]) {\
+block();\
+} else {\
+dispatch_async(dispatch_get_main_queue(), block);\
+}
+
 /*!
  引擎类型
  */
