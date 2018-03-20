@@ -87,38 +87,9 @@
 
 -(void)hangup
 {
-    void(^successBlock)(long messageId) = ^void(long messageId) {
-        [self hangupMessageSendSuccess];
-    };
-    
-    if (self.callStatus == RCCallDialing) {
-        // 取消
-        [[TTDCallClient sharedTTDCallClient] sendCallMessageWithKey:@"取消" success:successBlock];
-    }
-    if (self.callStatus == RCCallIncoming || self.callStatus == RCCallRinging) {
-        // 拒绝
-        [[TTDCallClient sharedTTDCallClient] sendCallMessageWithKey:@"拒绝" success:successBlock];
-    }
-    if (self.callStatus == RCCallActive) {
-        // 挂断
-        [[TTDCallClient sharedTTDCallClient] sendCallMessageWithKey:@"挂断" success:successBlock];
-    }
-    if (self.callStatus == RCCallHangup) {
-        
-    }
-}
-
--(void)hangupMessageSendSuccess
-{
-    [mediaEngine setupLocalVideo:nil];
-    [mediaEngine stopPreview];
-    if (self.callStatus == RCCallActive || self.callStatus == RCCallDialing) {
-        [mediaEngine leaveChannel:nil];
-        // 挂断
-    }
-    self.callStatus = RCCallHangup;
-
-    [_sessionDelegate callDidDisconnect];
+    [self leaveChannel];
+        // calling other
+//        [self stopRing];
 }
 
 -(BOOL)changeMediaType:(RCCallMediaType)type
@@ -176,6 +147,24 @@
     return [mediaEngine setEnableSpeakerphone:speakerEnabled];
 }
 
+
+- (void)leaveChannel {
+    
+    [mediaEngine stopPreview];
+    [mediaEngine setupLocalVideo:nil];
+    if (self.callStatus == RCCallActive || self.callStatus == RCCallDialing) {
+    }
+    // 挂断
+    [mediaEngine leaveChannel:nil];
+
+    if (self.callStatus == RCCallDialing) {
+//        for (NSString *account in self.remoteUserIdArray) {
+//            [signalEngine channelInviteEnd:self.channel account:account uid:0];
+//        }
+    }
+    self.callStatus = RCCallHangup;
+    [_sessionDelegate callDidDisconnect];
+}
 
 #pragma mark - AgoraRtcEngineDelegate
 

@@ -63,6 +63,10 @@
     session.inviter = self.localAccount;
 //    [session startCall];
     // 发起音视频邀请
+    self.channel = @"999999";
+    session.channel = self.channel;
+    [session accept:0];
+    
     // 查询用户在线状态，并发起 通话请求
     for (NSString *account in userIdList) {
         [signalEngine queryUserStatus:account];
@@ -181,20 +185,25 @@
 //        }
     };
     
-    // 远端 收到呼叫
-    signalEngine.onInviteReceivedByPeer = ^(NSString* channelID, NSString *account, uint32_t uid) {
-        NSLog(@"onInviteReceivedByPeer, channel: %@, account: %@, uid: %u", channelID, account, uid);
-        
+    // 接到邀请
+    signalEngine.onInviteReceived = ^(NSString *channelID, NSString *account, uint32_t uid, NSString *extra) {
+        NSLog(@"onInviteReceived, channel: %@, account: %@, uid: %u", channelID, account, uid);
         if (!weakSelf.currentCallSession) {
             // 弹出接受呼叫VC
             MultiCallViewController *callVC = [[MultiCallViewController alloc] initWithNibName:@"MultiCallViewController" bundle:nil];
             [callVC showWithCall:[weakSelf receiveCall:channelID inviter:account to:nil mediaType:RCCallMediaVideo]];
-            [[AppViewManager sharedManager] presentVC:callVC];
+        }else{
+            
         }
+    };
+    
+    // 远端 收到呼叫
+    signalEngine.onInviteReceivedByPeer = ^(NSString* channelID, NSString *account, uint32_t uid) {
+        NSLog(@"onInviteReceivedByPeer, channel: %@, account: %@, uid: %u", channelID, account, uid);
         if (![channelID isEqualToString:weakSelf.channel]) {
-            // 不是当前房间的 邀请
             return;
         }
+        // 振铃
         
         dispatch_async(dispatch_get_main_queue(), ^{
 //            [weakSelf playRing:@"tones"];

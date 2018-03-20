@@ -15,6 +15,7 @@
 #import "NSObject+JSONString.h"
 #import "SelectedUserViewController.h"
 #import "TTDCallClient.h"
+#import "AppViewManager.h"
 
 @interface MultiCallViewController () <RCCallSessionDelegate>
 {
@@ -37,7 +38,7 @@
 -(void)startCallTo:(NSArray *)userIdList
 {
     self.remoteUserIdArray = userIdList;
-    [[TTDCallClient sharedTTDCallClient] startCall:0 targetId:@"test" to:userIdList mediaType:RCCallMediaVideo sessionDelegate:self extra:nil];
+    self.callSession = [[TTDCallClient sharedTTDCallClient] startCall:0 targetId:@"test" to:userIdList mediaType:RCCallMediaVideo sessionDelegate:self extra:nil];
 }
 
 -(void)showWithCall:(TTDCallSession *)callSession
@@ -48,6 +49,7 @@
     {
         // 振铃
     }
+    [[AppViewManager sharedManager] presentVC:self];
 }
 
 - (void)viewDidLoad {
@@ -101,16 +103,7 @@
 
 - (void)applicationWillTerminate:(NSNotification *)noti
 {
-    [self cancelAllInvite];
-}
-
--(void)cancelAllInvite
-{
     [self.callSession hangup];
-    // 我是 发起人
-//    for (NSString *account in self.remoteUserIdArray) {
-//        [signalEngine channelInviteEnd:self.channel account:account uid:0];
-//    }
 }
 
 - (IBAction)muteButtonClicked:(UIButton *)sender {
@@ -124,24 +117,6 @@
 }
 
 - (IBAction)hangupButtonClicked:(UIButton *)sender {
-//    if (self.initiatorAccount) {
-//        // called by other
-//        NSDictionary *extraDic = @{@"status": @(0)};
-//        [signalEngine channelInviteRefuse:self.channel account:self.initiatorAccount uid:0 extra:[extraDic JSONString]];
-//    }
-//    else {
-//        // 取消所有 邀请
-//        [self cancelAllInvite];
-//    }
-//
-//    if (self.callingLabel.hidden) {
-//        // already accepted
-//        [self leaveChannel];
-//    }
-//    else {
-//        // calling other
-//        [self stopRing];
-//    }
     [self.callSession hangup];
     
     [self dismissViewControllerAnimated:NO completion:nil];
@@ -174,16 +149,6 @@
     
 //    [self stopRing];
 //    [self joinChannel];
-}
-
-- (void)leaveChannel {
-//    if (mediaEngine) {
-//        [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
-//        [mediaEngine stopPreview];
-//        [mediaEngine setupLocalVideo:nil];
-//        [mediaEngine leaveChannel:nil];
-//        mediaEngine = nil;
-//    }
 }
 
 - (IBAction)addUserButtonClicked:(id)sender

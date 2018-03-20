@@ -24,6 +24,9 @@
 - (void)presentVC:(UIViewController *)viewController
 {
     UIViewController *vc = [UIApplication sharedApplication].keyWindow.rootViewController;
+    while (vc.presentedViewController) {
+        vc = vc.presentedViewController;
+    }
     if (vc) {
         dispatch_sync_main_safe(^{
             [vc presentViewController:viewController animated:YES completion:nil];
