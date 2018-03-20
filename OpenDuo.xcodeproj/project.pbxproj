@@ -33,6 +33,8 @@
 		886E31D5205F9F5600DFB610 /* SelectedUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 886E31D3205F9F5600DFB610 /* SelectedUserViewController.xib */; };
 		886E31DA205FA2B300DFB610 /* UserTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 886E31D8205FA2B300DFB610 /* UserTableViewCell.m */; };
 		886E31DB205FA2B300DFB610 /* UserTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 886E31D9205FA2B300DFB610 /* UserTableViewCell.xib */; };
+		886E31E12060AEC200DFB610 /* TTDCallClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 886E31DD2060AEC100DFB610 /* TTDCallClient.m */; };
+		886E31E22060AEC200DFB610 /* TTDCallSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 886E31E02060AEC200DFB610 /* TTDCallSession.m */; };
 		88B7AB9D205A5C980005DE39 /* AgoraRtcEngineKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9C205A5C980005DE39 /* AgoraRtcEngineKit.framework */; };
 		88B7AB9F205A5CA80005DE39 /* AgoraSigKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */; };
 		88B7ABA3205A69830005DE39 /* ChooseUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 88B7ABA2205A69830005DE39 /* ChooseUserViewController.m */; };
@@ -84,6 +86,11 @@
 		886E31D7205FA2B300DFB610 /* UserTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserTableViewCell.h; sourceTree = "<group>"; };
 		886E31D8205FA2B300DFB610 /* UserTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserTableViewCell.m; sourceTree = "<group>"; };
 		886E31D9205FA2B300DFB610 /* UserTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UserTableViewCell.xib; sourceTree = "<group>"; };
+		886E31DD2060AEC100DFB610 /* TTDCallClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTDCallClient.m; sourceTree = "<group>"; };
+		886E31DE2060AEC100DFB610 /* TTDCallClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTDCallClient.h; sourceTree = "<group>"; };
+		886E31DF2060AEC200DFB610 /* TTDCallSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTDCallSession.h; sourceTree = "<group>"; };
+		886E31E02060AEC200DFB610 /* TTDCallSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTDCallSession.m; sourceTree = "<group>"; };
+		886E31E32060AED300DFB610 /* RCCallCommonDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCCallCommonDefine.h; sourceTree = "<group>"; };
 		88B7AB9C205A5C980005DE39 /* AgoraRtcEngineKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraRtcEngineKit.framework; sourceTree = "<group>"; };
 		88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraSigKit.framework; sourceTree = "<group>"; };
 		88B7ABA1205A69830005DE39 /* ChooseUserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChooseUserViewController.h; sourceTree = "<group>"; };
@@ -149,6 +156,7 @@
 		70DA283F1FA8455D00A56C64 /* OpenDuo */ = {
 			isa = PBXGroup;
 			children = (
+				886E31DC2060AEAC00DFB610 /* TTDCall */,
 				886E31CA205F50C200DFB610 /* Catagories */,
 				88B7ABA0205A65480005DE39 /* MultiCall */,
 				705AF7D71FAC8C8D002434E7 /* KeyCenter */,
@@ -212,6 +220,18 @@
 				886E31D9205FA2B300DFB610 /* UserTableViewCell.xib */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		886E31DC2060AEAC00DFB610 /* TTDCall */ = {
+			isa = PBXGroup;
+			children = (
+				886E31E32060AED300DFB610 /* RCCallCommonDefine.h */,
+				886E31DE2060AEC100DFB610 /* TTDCallClient.h */,
+				886E31DD2060AEC100DFB610 /* TTDCallClient.m */,
+				886E31DF2060AEC200DFB610 /* TTDCallSession.h */,
+				886E31E02060AEC200DFB610 /* TTDCallSession.m */,
+			);
+			path = TTDCall;
 			sourceTree = "<group>";
 		};
 		88B7ABA0205A65480005DE39 /* MultiCall */ = {
@@ -314,6 +334,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				70E49ED81FA9CD7C0062B0D5 /* AlertUtil.m in Sources */,
+				886E31E12060AEC200DFB610 /* TTDCallClient.m in Sources */,
+				886E31E22060AEC200DFB610 /* TTDCallSession.m in Sources */,
 				70DA286F1FA86D4300A56C64 /* DialViewController.m in Sources */,
 				886E31DA205FA2B300DFB610 /* UserTableViewCell.m in Sources */,
 				88B7ABA3205A69830005DE39 /* ChooseUserViewController.m in Sources */,

@@ -17,4 +17,5 @@
 
 - (instancetype)initWithUid:(NSUInteger)uid;
 + (instancetype)localSession;
+
 @end

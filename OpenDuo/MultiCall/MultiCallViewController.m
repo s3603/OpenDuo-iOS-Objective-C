@@ -81,6 +81,7 @@
 {
     [super viewWillAppear:animated];
     
+    mediaEngine = [AgoraRtcEngineKit sharedEngineWithAppId:[KeyCenter appId] delegate:self];
     [self loadSignalEngine];
 }
 
@@ -411,15 +412,29 @@
     signalEngine.onMessageSendError = ^(NSString *messageID, AgoraEcode ecode) {
         NSLog(@"onMessageSendError , messageID: %@ , code: %ld",messageID,ecode);
     };
+    
+    
 }
 
 //MARK: - AgoraRtcEngineDelegate
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurWarning:(AgoraWarningCode)warningCode {
     NSLog(@"rtcEngine:didOccurWarning: %ld", (long)warningCode);
+    static int count = 0;
+    if (warningCode == 104) {
+        count ++;
+    }
+    if (count == 10) {
+        [self leaveChannel];
+    }
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurError:(AgoraErrorCode)errorCode {
     NSLog(@"rtcEngine:didOccurError: %ld", (long)errorCode);
+}
+
+-(void)rtcEngine:(AgoraRtcEngineKit *)engine didLeaveChannelWithStats:(AgoraChannelStats *)stats
+{
+    NSLog(@"rtcEngine:didLeaveChannelWithStats: %ld", (long)stats);
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine firstLocalVideoFrameWithSize:(CGSize)size elapsed:(NSInteger)elapsed {
