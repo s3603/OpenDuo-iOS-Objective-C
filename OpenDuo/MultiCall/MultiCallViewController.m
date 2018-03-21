@@ -39,6 +39,7 @@
 {
     self.remoteUserIdArray = userIdList;
     self.callSession = [[TTDCallClient sharedTTDCallClient] startCall:0 targetId:@"test" to:userIdList mediaType:RCCallMediaVideo sessionDelegate:self extra:nil];
+    [[AppViewManager sharedManager] presentVC:self];
 }
 
 -(void)showWithCall:(TTDCallSession *)callSession
@@ -55,11 +56,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-//    [self loadMediaEngine];
-//    [self startLocalVideo];
 
     if (self.remoteUserIdArray.count == 0) {
-        self.callingLabel.text = [NSString stringWithFormat:@" 接到%@的通话请求", self.callSession];
+        self.callingLabel.text = [NSString stringWithFormat:@" 接到%@的通话请求", self.callSession.inviter];
         [self playRing:@"ring"];
     }else{
         
@@ -108,7 +107,7 @@
 
 - (IBAction)muteButtonClicked:(UIButton *)sender {
     [sender setSelected:!sender.isSelected];
-    [self.callSession setMuted:sender.isSelected];
+    [self.callSession setSpeakerEnabled:sender.isSelected];
 }
 
 - (IBAction)switchCameraButtonClicked:(UIButton *)sender {
@@ -173,7 +172,7 @@
         [session.userView setTapBlock:^(NSUInteger uid) {
             [self showActionSheet:uid];
         }];
-        [self.callSession setVideoView:session.userView.hostingView userId:session.uid];
+//        [self.callSession setVideoView:session.userView.hostingView userId:session.uid];
         i+=1;
     }
 //     判断全屏

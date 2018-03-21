@@ -40,27 +40,20 @@
     return instance;
 }
 
--(NSString *)localAccount
-{
-    if (!self.uid) {
-        return nil;
-    }
-    return [NSString stringWithFormat:@"%ld",self.uid];
-}
-
 -(TTDCallSession *)startCall:(int)conversationType targetId:(NSString *)targetId to:(NSArray *)userIdList mediaType:(RCCallMediaType)type sessionDelegate:(id<RCCallSessionDelegate>)delegate extra:(NSString *)extra
 {
-    if (!self.uid) {
+    if (!self.account) {
         [AlertUtil showAlert:@"请先登录"];
         return nil;
     }
     
     TTDCallSession *session = [[TTDCallSession alloc] init];
+    [session setDelegate:delegate];
     session.conversationType = conversationType;
     session.targetId = targetId;
     session.mediaType = type;
     session.extra = extra;
-    session.inviter = self.localAccount;
+    session.inviter = self.account;
 //    [session startCall];
     // 发起音视频邀请
     self.channel = @"999999";
@@ -188,7 +181,7 @@
     // 接到邀请
     signalEngine.onInviteReceived = ^(NSString *channelID, NSString *account, uint32_t uid, NSString *extra) {
         NSLog(@"onInviteReceived, channel: %@, account: %@, uid: %u", channelID, account, uid);
-        if (!weakSelf.currentCallSession) {
+        if (!weakSelf.currentCallSession || weakSelf.currentCallSession.callStatus == RCCallHangup) {
             // 弹出接受呼叫VC
             MultiCallViewController *callVC = [[MultiCallViewController alloc] initWithNibName:@"MultiCallViewController" bundle:nil];
             [callVC showWithCall:[weakSelf receiveCall:channelID inviter:account to:nil mediaType:RCCallMediaVideo]];
@@ -319,14 +312,14 @@
     [signalEngine login:[KeyCenter appId]
                 account:account
                   token:[KeyCenter generateSignalToken:account expiredTime:3600]
-                    uid:account.intValue
+                    uid:0
                deviceID:nil];
     
-    __weak typeof(self) weakSelf = self;
     //MARK: 登录监听 onLoginSuccess
     signalEngine.onLoginSuccess = ^(uint32_t uid, int fd) {
         NSLog(@"Login successfully, uid: %u", uid);
-        weakSelf.uid = uid;
+//        _uid = uid;
+        _account = account;
         success(uid,0);
     };
     

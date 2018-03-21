@@ -31,6 +31,7 @@
 -(instancetype)init
 {
     self = [super init];
+    self.videoSessions = [NSMutableArray new];
     [self initAgoraSDK];
     
     return self;
@@ -48,9 +49,10 @@
     [mediaEngine setLogFile:logFilePath];
     //[mediaEngine setParameters:@"{\"rtc.log_filter\":65535}"];
     
-    [mediaEngine enableVideo];
     [mediaEngine setVideoProfile:AgoraVideoProfileLandscape240P swapWidthAndHeight:NO];
     [mediaEngine enableAudioVolumeIndication:500 smooth:3];
+    [mediaEngine enableVideo];
+    [self startLocalVideo];
 }
 
 -(void)setDelegate:(id<RCCallSessionDelegate>)delegate
@@ -68,9 +70,9 @@
 -(void)joinCall
 {
     [signalEngine channelInviteAccept:self.channel account:self.inviter uid:0];
-
-    int uid = [TTDCallClient sharedTTDCallClient].uid;
-    NSString *key = [KeyCenter generateMediaKey:self.channel uid:uid expiredTime:0];
+    
+    int uid = [TTDCallClient sharedTTDCallClient].account.intValue;
+    NSString *key = [KeyCenter generateMediaKey:self.channel uid:0 expiredTime:0];
     int result = [mediaEngine joinChannelByToken:key channelId:self.channel info:nil uid:uid joinSuccess:nil];
     if (result != AgoraEcode_SUCCESS) {
         NSLog(@"Join channel failed: %d", result);
@@ -81,6 +83,8 @@
 //            [weakSelf dismissViewControllerAnimated:NO completion:nil];
         }];
     }else{
+        [signalEngine channelJoin:self.channel];
+        [_sessionDelegate updateInterface:self.videoSessions];
         [_sessionDelegate callDidConnect];
     }
 }
@@ -104,7 +108,7 @@
 
 -(void)setVideoView:(UIView *)view userId:(int)userId
 {
-    int loginUserId = [TTDCallClient sharedTTDCallClient].uid;
+    int loginUserId = [TTDCallClient sharedTTDCallClient].account.intValue;
     
     if (view) {
         if (loginUserId == userId) {
@@ -156,7 +160,8 @@
     }
     // 挂断
     [mediaEngine leaveChannel:nil];
-
+    [signalEngine channelLeave:self.channel];
+    
     if (self.callStatus == RCCallDialing) {
 //        for (NSString *account in self.remoteUserIdArray) {
 //            [signalEngine channelInviteEnd:self.channel account:account uid:0];
@@ -291,17 +296,12 @@
 }
 
 - (void)startLocalVideo {
-//    VideoSession *localSession = [[VideoSession alloc] initWithUid:self.localAccount.intValue];
-//    [self.videoSessions addObject:localSession];
-    
-    // add userView
-//    [self.localVideo addSubview:localSession.userView];
-//    localSession.userView.frame = self.localVideo.bounds;
-//    [localSession.userView setTapBlock:^(NSUInteger uid) {
-//        [self showActionSheet:uid];
-//    }];
+    int loginUserId = [TTDCallClient sharedTTDCallClient].account.intValue;
+    VideoSession *localSession = [[VideoSession alloc] initWithUid:loginUserId];
+    [self.videoSessions addObject:localSession];
     
     [mediaEngine startPreview];
+    [mediaEngine setupLocalVideo:localSession.canvas];
 }
 
 @end

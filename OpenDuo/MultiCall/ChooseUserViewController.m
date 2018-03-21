@@ -73,7 +73,6 @@
     
     MultiCallViewController *callVC = [[MultiCallViewController alloc] initWithNibName:@"MultiCallViewController" bundle:nil];
     [callVC startCallTo:accounts];
-    [self presentViewController:callVC animated:NO completion:nil];
 }
 
 @end

@@ -12,11 +12,10 @@
 @interface TTDCallClient : NSObject
 
 @property(nonatomic, strong) TTDCallSession *currentCallSession;
-@property(nonatomic, assign) NSUInteger uid;
+
+@property(nonatomic, copy, readonly) NSString *account;
 
 + (instancetype)sharedTTDCallClient;
-
--(NSString *)localAccount;
 
 /*!
  发起一个通话

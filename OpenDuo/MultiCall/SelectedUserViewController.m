@@ -65,11 +65,15 @@
             user.channelId = nil;
         }
     }];
+    [signalEngine setOnChannelQueryUserNumResult:^(NSString *channelID, AgoraEcode ecode, int num) {
+        NSLog(@"setOnChannelQueryUserNumResult, channelID: %@, num: %d", channelID, num);
+    }];
     
     for (User *user in self.userArr) {
         [signalEngine channelQueryUserIsIn:self.channelId account:user.account];
         [signalEngine queryUserStatus:user.account];
     }
+    [signalEngine channelQueryUserNum:self.channelId];
 }
 
 -(User *)userWithAccount:(NSString *)account
@@ -115,7 +119,7 @@
         cell.selectedBtn.enabled = NO;
     }else{
         if (user.channelId) {
-            cell.desLab.text = [NSString stringWithFormat:@"已加入%@",user.channelId];
+            cell.desLab.text = [NSString stringWithFormat:@"已加入频道"];
             cell.selectedBtn.enabled = NO;
         }else{
             cell.desLab.text = @"可邀请";
