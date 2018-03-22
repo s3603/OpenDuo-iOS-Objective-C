@@ -13,6 +13,8 @@
 #import <AgoraRtcEngineKit/AgoraRtcEngineKit.h>
 #import <AgoraSigKit/AgoraSigKit.h>
 #import "AlertUtil.h"
+#import "NSObject+JSONString.h"
+#import "UIView+Toast.h"
 
 @interface TTDCallSession () <AgoraRtcEngineDelegate>
 {
@@ -34,8 +36,18 @@
     self.videoSessions = [NSMutableArray new];
     [self initAgoraSDK];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillTerminate:)
+                                                 name:UIApplicationWillTerminateNotification
+                                               object:nil];
     return self;
 }
+
+- (void)applicationWillTerminate:(NSNotification *)noti
+{
+    [self hangup];
+}
+
 -(void)initAgoraSDK
 {
     mediaEngine = [AgoraRtcEngineKit sharedEngineWithAppId:[KeyCenter appId] delegate:self];
@@ -49,6 +61,8 @@
     [mediaEngine setLogFile:logFilePath];
     //[mediaEngine setParameters:@"{\"rtc.log_filter\":65535}"];
     
+    [mediaEngine setChannelProfile:AgoraChannelProfileLiveBroadcasting];
+    [mediaEngine setClientRole:AgoraClientRoleBroadcaster];
     [mediaEngine setVideoProfile:AgoraVideoProfileLandscape240P swapWidthAndHeight:NO];
     [mediaEngine enableAudioVolumeIndication:500 smooth:3];
     [mediaEngine enableVideo];
@@ -63,19 +77,20 @@
 -(void)accept:(RCCallMediaType)type
 {
     [self joinCall];
-//    [[TTDCallClient sharedTTDCallClient] sendCallMessageWithKey:@"接受" success:^(long messageId) {
-//    }];
 }
 
 -(void)joinCall
 {
+    // 接受邀请
     [signalEngine channelInviteAccept:self.channel account:self.inviter uid:0];
     
     int uid = [TTDCallClient sharedTTDCallClient].account.intValue;
     NSString *key = [KeyCenter generateMediaKey:self.channel uid:0 expiredTime:0];
+    // 加入 media频道
     int result = [mediaEngine joinChannelByToken:key channelId:self.channel info:nil uid:uid joinSuccess:nil];
     if (result != AgoraEcode_SUCCESS) {
         NSLog(@"Join channel failed: %d", result);
+        // 加入失败
         [signalEngine channelInviteEnd:self.channel account:self.inviter uid:0];
         
         __weak typeof(self) weakSelf = self;
@@ -83,6 +98,9 @@
 //            [weakSelf dismissViewControllerAnimated:NO completion:nil];
         }];
     }else{
+        // 加入成功监听频道信息
+        [self addSignalEngineListener];
+        // 加入 信令频道
         [signalEngine channelJoin:self.channel];
         [_sessionDelegate updateInterface:self.videoSessions];
         [_sessionDelegate callDidConnect];
@@ -149,7 +167,6 @@
     return [mediaEngine setEnableSpeakerphone:speakerEnabled];
 }
 
-
 - (void)leaveChannel {
     
     [mediaEngine stopPreview];
@@ -158,6 +175,7 @@
     }
     // 挂断
     [mediaEngine leaveChannel:nil];
+    // 离开信令频道
     [signalEngine channelLeave:self.channel];
     
     if (self.callStatus == RCCallDialing) {
@@ -169,7 +187,112 @@
 //    [_sessionDelegate callDidDisconnect];
 }
 
-#pragma mark - AgoraRtcEngineDelegate
+//MARK: -  AgoraAPI Listener
+-(void)addSignalEngineListener
+{
+    [signalEngine setOnChannelJoined:^(NSString *channelID) {
+        // 加入成功
+        NSLog(@"Join 信令 channel : %@", channelID);
+    }];
+    [signalEngine setOnChannelJoinFailed:^(NSString *channelID, AgoraEcode ecode) {
+        // 音视频加入成功， 信令加入失败， 重连机制
+        NSLog(@"Join 信令 channel failed : %lu", (unsigned long)ecode);
+    }];
+    [signalEngine setOnMessageChannelReceive:^(NSString *channelID, NSString *account, uint32_t uid, NSString *msg) {
+        NSLog(@"onMessageChannelReceive, channel: %@, account: %@, uid: %u, msg: %@", channelID, account, uid, msg);
+        // 接到消息，判断是否命令自己
+        if ([channelID isEqualToString:self.channel]) {
+            NSDictionary *params = [msg JSONValue];
+            if ([[TTDCallClient sharedTTDCallClient].account isEqualToString:params[@"to"]] && [params[@"show"] intValue] == 0) {
+                TTDCMDMessageType type = [CMDKeys indexOfObject:params[@"cmd"]];
+                NSString *showMessage = @"";
+                if (type == MESSAGE_KICK) {
+                    [mediaEngine pauseAudioMixing];
+                    showMessage = [NSString stringWithFormat:@"您已被 %@ 踢出聊天",params[@"from"]];
+                    [AlertUtil showAlert:showMessage completion:^{
+                        [_sessionDelegate callDidDisconnect];
+                    }];
+                }else
+                if (type == MESSAGE_CLOSE_MIC) {
+                    showMessage = [NSString stringWithFormat:@"您被%@ 关闭麦克风",params[@"from"]];
+                    [AlertUtil showAlert:showMessage];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        [_sessionDelegate ]
+//                        weakSelf.micButton.selected = YES;
+//                        [mediaEngine muteLocalAudioStream:weakSelf.micButton];
+                    });
+                }else
+                if (type == MESSAGE_OPEN_VIDEO) {
+                    showMessage = [NSString stringWithFormat:@"您被%@ 打开摄像头",params[@"from"]];
+                    [AlertUtil showAlert:showMessage];
+                    [mediaEngine enableVideo];
+                }else
+                if (type == MESSAGE_CLOSE_VIDEO) {
+                    showMessage = [NSString stringWithFormat:@"您被%@ 关闭摄像头",params[@"from"]];
+                    [AlertUtil showAlert:showMessage];
+                    [mediaEngine disableVideo];
+                }else
+                if (type == MESSAGE_OPEN_MIC) {
+                    showMessage = [NSString stringWithFormat:@"您被%@ 打开麦克风",params[@"from"]];
+                    [AlertUtil showAlert:showMessage];
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        weakSelf.micButton.selected = NO;
+//                        [mediaEngine muteLocalAudioStream:weakSelf.micButton];
+//                    });
+                }else
+                if (type == MESSAGE_AUDIENCE) {
+                    showMessage = [NSString stringWithFormat:@"您被%@ 设置为观众",params[@"from"]];
+                    [AlertUtil showAlert:showMessage];
+                    int success = [mediaEngine setClientRole:AgoraClientRoleAudience];
+                    NSLog(@"%i",success);
+                }else
+                if (type == MESSAGE_PLAYER) {
+                    showMessage = [NSString stringWithFormat:@"您被%@ 设置为播放端",params[@"from"]];
+                    [AlertUtil showAlert:showMessage];
+                    int success = [mediaEngine setClientRole:AgoraClientRoleBroadcaster];
+                    NSLog(@"%i",success);
+                }
+                [self sendCMDExecuteMessage:params ShowText:showMessage];
+
+            }else{
+                // 执行人是其他人 显示show==1 的提示信息
+                if ([params[@"show"] intValue] == 1) {
+//                    [AlertUtil showAlert:];
+                    [MAIN_WINDOW makeToast:params[@"showText"]];
+                }
+            }
+        }
+    }];
+    [signalEngine setOnMessageSendSuccess:^(NSString *messageID) {
+        NSLog(@"发送消息成功 %@", messageID);
+    }];
+    [signalEngine setOnMessageSendError:^(NSString *messageID, AgoraEcode ecode) {
+        NSLog(@"发送消息 %@ failed : %lu", messageID, (unsigned long)ecode);
+    }];
+}
+
+//MARK: sendChannelMessage
+-(void)sendCMDMessage:(NSString *)key To:(NSUInteger)uid
+{
+    NSString *to = [NSString stringWithFormat:@"%ld",uid];
+
+    NSMutableDictionary *params = [NSMutableDictionary new];
+    [params setObject:key forKey:@"cmd"];
+    [params setObject:to forKey:@"to"];
+    [params setObject:[TTDCallClient sharedTTDCallClient].account forKey:@"from"];
+    [params setObject:@0 forKey:@"show"];
+
+    [signalEngine messageChannelSend:self.channel msg:[params JSONString] msgID:nil];
+}
+-(void)sendCMDExecuteMessage:(NSDictionary *)params ShowText:(NSString *)showText
+{
+    showText = [showText stringByReplacingOccurrencesOfString:@"您" withString:[NSString stringWithFormat:@"%@ ",[TTDCallClient sharedTTDCallClient].account]];
+    
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:params];
+    [dic setValue:@1 forKey:@"show"];
+    [dic setValue:showText forKey:@"showText"];
+    [signalEngine messageChannelSend:self.channel msg:[dic JSONString] msgID:nil];
+}
 
 //MARK: - AgoraRtcEngineDelegate
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurWarning:(AgoraWarningCode)warningCode {

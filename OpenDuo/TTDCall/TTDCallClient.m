@@ -142,7 +142,7 @@
 //MARK: - 邀请加入通话
 - (void)inviteUser:(NSString *)name
 {
-    NSDictionary *extraDic = @{@"_require_peer_online": @(1)};
+    NSDictionary *extraDic = @{@"_require_peer_online": @(0)};
     [signalEngine channelInviteUser2:self.channel account:name extra:extraDic.JSONString];
 }
 
@@ -209,7 +209,7 @@
         if (![channelID isEqualToString:weakSelf.channel]) {
             return;
         }
-        
+//        [self.currentCallSession ]
         //        dispatch_async(dispatch_get_main_queue(), ^{
         //            [weakSelf leaveChannel];
         //
@@ -263,38 +263,6 @@
     // 接收点对点消息
     signalEngine.onMessageInstantReceive = ^(NSString *account, uint32_t uid, NSString *msg) {
         NSLog(@"onMessageInstantReceive, channel: %@, account: %@, uid: %u, msg: %@", @"", account, uid, msg);
-        //        if ([account isEqualToString:weakSelf.localAccount]){
-//        TTDCMDMessageType type = [CMDKeys indexOfObject:msg];
-//        if (type == MESSAGE_KICK) {
-//            [mediaEngine pauseAudioMixing];
-//            [AlertUtil showAlert:@"您已被踢出聊天" completion:^{
-//                //                    [weakSelf dismissViewControllerAnimated:NO completion:nil];
-//                [weakSelf hangupButtonClicked:nil];
-//            }];
-//        }
-//        if (type == MESSAGE_CLOSE_MIC) {
-//            [AlertUtil showAlert:@"被管理员 关闭麦克风"];
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                weakSelf.micButton.selected = YES;
-//                [mediaEngine muteLocalAudioStream:weakSelf.micButton];
-//            });
-//        }
-//        if (type == MESSAGE_OPEN_VIDEO) {
-//            [AlertUtil showAlert:@"被管理员 打开摄像头"];
-//            [mediaEngine enableVideo];
-//        }
-//        if (type == MESSAGE_CLOSE_VIDEO) {
-//            [AlertUtil showAlert:@"被管理员 关闭摄像头"];
-//            [mediaEngine disableVideo];
-//        }
-//        if (type == MESSAGE_OPEN_MIC) {
-//            [AlertUtil showAlert:@"被管理员 打开麦克风"];
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                weakSelf.micButton.selected = NO;
-//                [mediaEngine muteLocalAudioStream:weakSelf.micButton];
-//            });
-//        }
-        //        }
     };
     
     // 接收频道消息

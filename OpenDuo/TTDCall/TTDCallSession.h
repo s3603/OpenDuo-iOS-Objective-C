@@ -11,6 +11,8 @@
 #import <UIKit/UIKit.h>
 #import "VideoSession.h"
 
+#define MAIN_WINDOW [[[UIApplication sharedApplication] delegate] window]
+
 /*!
  通话状态变化的监听器
  */
@@ -262,4 +264,12 @@
  */
 - (BOOL)switchCameraMode;
 
+
+/**
+ 发送命令消息
+
+ @param key CMDKey
+ @param uid 对方id
+ */
+-(void)sendCMDMessage:(NSString *)key To:(NSUInteger)uid;
 @end

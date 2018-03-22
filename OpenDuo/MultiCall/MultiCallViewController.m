@@ -66,11 +66,6 @@
         self.buttonStackView.axis = UILayoutConstraintAxisVertical;
         [self.acceptButton removeFromSuperview];
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationWillTerminate:)
-                                                 name:UIApplicationWillTerminateNotification
-                                               object:nil];
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -78,33 +73,8 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];    
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-//    [AgoraRtcEngineKit sharedEngineWithAppId:[KeyCenter appId] delegate:nil];
-//
-//    signalEngine.onError = nil;
-//    signalEngine.onQueryUserStatusResult = nil;
-//    signalEngine.onInviteReceivedByPeer = nil;
-//    signalEngine.onInviteFailed = nil;
-//    signalEngine.onInviteAcceptedByPeer = nil;
-//    signalEngine.onInviteRefusedByPeer = nil;
-//    signalEngine.onInviteEndByPeer = nil;
-}
-
-- (void)applicationWillTerminate:(NSNotification *)noti
-{
-    [self.callSession hangup];
-}
-
 - (IBAction)muteButtonClicked:(UIButton *)sender {
     [sender setSelected:!sender.isSelected];
-//    [self.callSession setSpeakerEnabled:sender.isSelected];
     [self.callSession setMuted:sender.isSelected];
 }
 
@@ -115,7 +85,6 @@
 
 - (IBAction)hangupButtonClicked:(UIButton *)sender {
     [self.callSession hangup];
-    
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 
@@ -147,6 +116,11 @@
     SelectedUserViewController *selectUserVC = [[SelectedUserViewController alloc] initWithNibName:@"SelectedUserViewController" bundle:nil];
     selectUserVC.channelId = self.callSession.channel;
     [self presentViewController:selectUserVC animated:YES completion:nil ];
+}
+
+-(IBAction)refreshUsers:(id)sender
+{
+    
 }
 
 #define kWidth                      [UIScreen mainScreen].bounds.size.width
@@ -188,6 +162,12 @@
     UIAlertAction *openMic = [UIAlertAction actionWithTitle:@"打开麦克风" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self sendMessage:@"openMic" To:uid];
     }];
+    UIAlertAction *audience = [UIAlertAction actionWithTitle:@"切换为观众" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self sendMessage:@"audience" To:uid];
+    }];
+    UIAlertAction *player = [UIAlertAction actionWithTitle:@"切换为主播" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self sendMessage:@"player" To:uid];
+    }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
     [sheet addAction:kick];
@@ -195,16 +175,19 @@
     [sheet addAction:closeVideo];
     [sheet addAction:openVideo];
     [sheet addAction:openMic];
+    [sheet addAction:audience];
+    [sheet addAction:player];
+
     [sheet addAction:cancel];
 //    [sheet popoverPresentationController].sourceView = self.popoverSourceView;
     [sheet popoverPresentationController].permittedArrowDirections = UIPopoverArrowDirectionUp;
     [self presentViewController:sheet animated:YES completion:nil];
 }
 
+// MARK: 发送命令消息
 -(void)sendMessage:(NSString *)key To:(NSUInteger)uid
 {
-    NSString *name = [NSString stringWithFormat:@"%ld",uid];
-//    [signalEngine messageInstantSend:name uid:uid msg:key msgID:nil];
+    [self.callSession sendCMDMessage:key To:uid];
 }
 
 //MARK: - RCCallSessionDelegate
@@ -225,7 +208,7 @@
  */
 - (void)callDidDisconnect;
 {
-    
+    [self hangupButtonClicked:nil];
 }
 
 /*!
@@ -279,7 +262,7 @@
  */
 - (void)remoteUserDidDisableCamera:(BOOL)disabled byUser:(NSString *)userId;
 {
-    [self.view makeToast:[NSString stringWithFormat:@"%@ 关闭了摄像头",userId]];
+    [self.view makeToast:[NSString stringWithFormat:@"%@ %@了摄像头",userId,disabled?@"关闭":@"开启"]];
 }
 
 /*!

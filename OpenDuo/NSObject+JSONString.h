@@ -13,3 +13,9 @@
 - (NSString *)JSONString;
 
 @end
+
+@interface NSString(JSONCategories)
+
+-(id)JSONValue;
+
+@end
