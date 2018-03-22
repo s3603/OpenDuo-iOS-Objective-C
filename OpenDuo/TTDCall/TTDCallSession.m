@@ -92,8 +92,6 @@
 -(void)hangup
 {
     [self leaveChannel];
-        // calling other
-//        [self stopRing];
 }
 
 -(BOOL)changeMediaType:(RCCallMediaType)type
@@ -137,7 +135,7 @@
 -(BOOL)setMuted:(BOOL)muted
 {
     [mediaEngine muteLocalAudioStream:muted];
-    [mediaEngine muteLocalVideoStream:muted];
+//    [mediaEngine muteLocalVideoStream:muted];
     return YES;
 }
 
@@ -168,7 +166,7 @@
 //        }
     }
     self.callStatus = RCCallHangup;
-    [_sessionDelegate callDidDisconnect];
+//    [_sessionDelegate callDidDisconnect];
 }
 
 #pragma mark - AgoraRtcEngineDelegate
@@ -209,7 +207,7 @@
     NSLog(@"rtcEngine:didJoinedOfUid: %ld", (long)uid);
     VideoSession *userSession = [self videoSessionOfUid:uid];
     [mediaEngine setupRemoteVideo:userSession.canvas];
-//    [_sessionDelegate remoteUserDidJoin:[NSString stringWithFormat:@"%d",uid] mediaType:RCCallMediaVideo];
+    [_sessionDelegate remoteUserDidJoin:[NSString stringWithFormat:@"%ld",uid] mediaType:RCCallMediaVideo];
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didOfflineOfUid:(NSUInteger)uid reason:(AgoraUserOfflineReason)reason {
@@ -233,6 +231,7 @@
             self.fullSession = nil;
         }
     }
+    [_sessionDelegate remoteUserDidLeft:[NSString stringWithFormat:@"%ld",uid] reason:RCCallDisconnectReasonRemoteHangup];
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine
@@ -245,7 +244,7 @@
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine
   didVideoEnabled:(BOOL)enabled byUid:(NSUInteger)uid
 {
-    
+    [_sessionDelegate remoteUserDidDisableCamera:!enabled byUser:[NSString stringWithFormat:@"%ld",uid]];
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine reportAudioVolumeIndicationOfSpeakers:
@@ -271,6 +270,11 @@
             [session.userView changeSpeakState:NO];
         }
     }
+}
+
+-(void)rtcEngineVideoDidStop:(AgoraRtcEngineKit *)engine
+{
+    NSLog(@"rtcEngineVideoDidStop");
 }
 
 //MARK: - VideoSession

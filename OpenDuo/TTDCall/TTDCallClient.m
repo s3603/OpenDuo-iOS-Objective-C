@@ -66,7 +66,7 @@
     }
     session.callStatus = RCCallDialing;
 
-    self.currentCallSession = session;
+    _currentCallSession = session;
     
     return self.currentCallSession;
 }
@@ -79,7 +79,7 @@
     session.channel = channel;
     
     session.callStatus = RCCallIncoming;
-    self.currentCallSession = session;
+    _currentCallSession = session;
     return self.currentCallSession;
 }
 

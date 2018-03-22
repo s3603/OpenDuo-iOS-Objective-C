@@ -16,6 +16,7 @@
 #import "SelectedUserViewController.h"
 #import "TTDCallClient.h"
 #import "AppViewManager.h"
+#import "UIView+Toast.h"
 
 @interface MultiCallViewController () <RCCallSessionDelegate>
 {
@@ -48,7 +49,9 @@
     [self.callSession setDelegate:self];
     if (self.callSession.callStatus == RCCallIncoming || self.callSession.callStatus == RCCallRinging)
     {
-        // 振铃
+        // 等待接听 振铃
+        [self playRing:@"ring"];
+        self.callingLabel.text = [NSString stringWithFormat:@" 接到%@的通话请求", self.callSession.inviter];
     }
     [[AppViewManager sharedManager] presentVC:self];
 }
@@ -58,16 +61,10 @@
     // Do any additional setup after loading the view from its nib.
 
     if (self.remoteUserIdArray.count == 0) {
-        self.callingLabel.text = [NSString stringWithFormat:@" 接到%@的通话请求", self.callSession.inviter];
-        [self playRing:@"ring"];
     }else{
-        
         self.callingLabel.text = [NSString stringWithFormat:@"对 %@ 发起通话请求", [self.remoteUserIdArray componentsJoinedByString:@","]];
         self.buttonStackView.axis = UILayoutConstraintAxisVertical;
         [self.acceptButton removeFromSuperview];
-        
-        //
-//        self.channel = [NSString stringWithFormat:@"c-%@",self.callSession.channel];
     }
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationWillTerminate:)
@@ -107,7 +104,8 @@
 
 - (IBAction)muteButtonClicked:(UIButton *)sender {
     [sender setSelected:!sender.isSelected];
-    [self.callSession setSpeakerEnabled:sender.isSelected];
+//    [self.callSession setSpeakerEnabled:sender.isSelected];
+    [self.callSession setMuted:sender.isSelected];
 }
 
 - (IBAction)switchCameraButtonClicked:(UIButton *)sender {
@@ -141,13 +139,7 @@
 
 - (IBAction)acceptButtonClicked:(UIButton *)sender {
     [self.callSession accept:0];
-    
-    self.callingLabel.hidden = YES;
-    self.buttonStackView.axis = UILayoutConstraintAxisVertical;
-    [self.acceptButton removeFromSuperview];
-    
-//    [self stopRing];
-//    [self joinChannel];
+    // 成功回调在 callDidConnect
 }
 
 - (IBAction)addUserButtonClicked:(id)sender
@@ -172,7 +164,6 @@
         [session.userView setTapBlock:^(NSUInteger uid) {
             [self showActionSheet:uid];
         }];
-//        [self.callSession setVideoView:session.userView.hostingView userId:session.uid];
         i+=1;
     }
 //     判断全屏
@@ -222,7 +213,11 @@
  */
 - (void)callDidConnect;
 {
+    self.callingLabel.hidden = YES;
+    self.buttonStackView.axis = UILayoutConstraintAxisVertical;
+    [self.acceptButton removeFromSuperview];
     
+    [self stopRing];
 }
 
 /*!
@@ -240,7 +235,7 @@
  */
 - (void)remoteUserDidRing:(NSString *)userId;
 {
-    
+    [self.view makeToast:[NSString stringWithFormat:@"%@ 正在振铃",userId]];
 }
 
 /*!
@@ -251,7 +246,7 @@
  */
 - (void)remoteUserDidInvite:(NSString *)userId mediaType:(RCCallMediaType)mediaType;
 {
-    
+    [self.view makeToast:[NSString stringWithFormat:@"%@ 被邀请加入",userId]];
 }
 
 /*!
@@ -262,7 +257,7 @@
  */
 - (void)remoteUserDidJoin:(NSString *)userId mediaType:(RCCallMediaType)mediaType;
 {
-    
+    [self.view makeToast:[NSString stringWithFormat:@"%@ 加入了通话",userId]];
 }
 
 /*!
@@ -273,7 +268,7 @@
  */
 - (void)remoteUserDidChangeMediaType:(NSString *)userId mediaType:(RCCallMediaType)mediaType;
 {
-    
+    [self.view makeToast:[NSString stringWithFormat:@"%@ 切换了 %@",userId,mediaType==RCCallMediaVideo?@"视频":@"音频"]];
 }
 
 /*!
@@ -284,7 +279,7 @@
  */
 - (void)remoteUserDidDisableCamera:(BOOL)disabled byUser:(NSString *)userId;
 {
-    
+    [self.view makeToast:[NSString stringWithFormat:@"%@ 关闭了摄像头",userId]];
 }
 
 /*!
@@ -295,7 +290,7 @@
  */
 - (void)remoteUserDidLeft:(NSString *)userId reason:(RCCallDisconnectReason)reason;
 {
-    
+    [self.view makeToast:[NSString stringWithFormat:@"%@ 挂断了",userId]];
 }
 
 /*!
@@ -303,7 +298,7 @@
  */
 - (void)shouldAlertForWaitingRemoteResponse;
 {
-    
+    [self playRing:@"tones"];
 }
 
 /*!
@@ -311,7 +306,7 @@
  */
 - (void)shouldRingForIncomingCall;
 {
-    
+    [self playRing:@"ring"];
 }
 
 /*!
@@ -319,7 +314,7 @@
  */
 - (void)shouldStopAlertAndRing;
 {
-    
+    [self stopRing];
 }
 
 /*!

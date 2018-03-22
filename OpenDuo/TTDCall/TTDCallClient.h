@@ -11,7 +11,7 @@
 
 @interface TTDCallClient : NSObject
 
-@property(nonatomic, strong) TTDCallSession *currentCallSession;
+@property(nonatomic, strong, readonly) TTDCallSession *currentCallSession;
 
 @property(nonatomic, copy, readonly) NSString *account;
 

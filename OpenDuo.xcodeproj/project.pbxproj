@@ -29,6 +29,7 @@
 		70DA28721FA86D5400A56C64 /* CallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70DA28711FA86D5400A56C64 /* CallViewController.m */; };
 		70DA28751FA8832D00A56C64 /* CALayer+LayerColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 70DA28741FA8832D00A56C64 /* CALayer+LayerColor.m */; };
 		70E49ED81FA9CD7C0062B0D5 /* AlertUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 70E49ED71FA9CD7C0062B0D5 /* AlertUtil.m */; };
+		8807F338206241DA0023C65B /* UIView+Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 8807F336206241DA0023C65B /* UIView+Toast.m */; };
 		886E31D4205F9F5600DFB610 /* SelectedUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 886E31D2205F9F5600DFB610 /* SelectedUserViewController.m */; };
 		886E31D5205F9F5600DFB610 /* SelectedUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 886E31D3205F9F5600DFB610 /* SelectedUserViewController.xib */; };
 		886E31DA205FA2B300DFB610 /* UserTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 886E31D8205FA2B300DFB610 /* UserTableViewCell.m */; };
@@ -81,6 +82,8 @@
 		70DA28741FA8832D00A56C64 /* CALayer+LayerColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CALayer+LayerColor.m"; sourceTree = "<group>"; };
 		70E49ED61FA9CD7C0062B0D5 /* AlertUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertUtil.h; sourceTree = "<group>"; };
 		70E49ED71FA9CD7C0062B0D5 /* AlertUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertUtil.m; sourceTree = "<group>"; };
+		8807F336206241DA0023C65B /* UIView+Toast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Toast.m"; sourceTree = "<group>"; };
+		8807F337206241DA0023C65B /* UIView+Toast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Toast.h"; sourceTree = "<group>"; };
 		886E31D1205F9F5600DFB610 /* SelectedUserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SelectedUserViewController.h; sourceTree = "<group>"; };
 		886E31D2205F9F5600DFB610 /* SelectedUserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SelectedUserViewController.m; sourceTree = "<group>"; };
 		886E31D3205F9F5600DFB610 /* SelectedUserViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectedUserViewController.xib; sourceTree = "<group>"; };
@@ -209,6 +212,8 @@
 		886E31CA205F50C200DFB610 /* Catagories */ = {
 			isa = PBXGroup;
 			children = (
+				8807F337206241DA0023C65B /* UIView+Toast.h */,
+				8807F336206241DA0023C65B /* UIView+Toast.m */,
 			);
 			path = Catagories;
 			sourceTree = "<group>";
@@ -345,6 +350,7 @@
 				886E31DA205FA2B300DFB610 /* UserTableViewCell.m in Sources */,
 				88B7ABA3205A69830005DE39 /* ChooseUserViewController.m in Sources */,
 				70DA28451FA8455D00A56C64 /* LoginViewController.m in Sources */,
+				8807F338206241DA0023C65B /* UIView+Toast.m in Sources */,
 				88B7ABAE205A7C1E0005DE39 /* VideoSession.m in Sources */,
 				705AF7DC1FAC8C8D002434E7 /* KeyCenter.mm in Sources */,
 				88B7ABB1205B949D0005DE39 /* UserVideoView.m in Sources */,
