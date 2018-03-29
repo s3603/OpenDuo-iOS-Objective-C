@@ -81,15 +81,12 @@
 		88BBFE39206C8B4F00E19068 /* CALayer+LayerColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 70DA28741FA8832D00A56C64 /* CALayer+LayerColor.m */; };
 		88BBFE3A206C8B4F00E19068 /* NSObject+JSONString.m in Sources */ = {isa = PBXBuildFile; fileRef = 702F6E441FAAC701009413E4 /* NSObject+JSONString.m */; };
 		88BBFE3B206C8B4F00E19068 /* AlertUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 70E49ED71FA9CD7C0062B0D5 /* AlertUtil.m */; };
-		88BBFE3C206C8B6700E19068 /* AgoraSigKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */; };
 		88BBFE3D206C8B6900E19068 /* AgoraRtcEngineKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9C205A5C980005DE39 /* AgoraRtcEngineKit.framework */; };
 		88BBFE3E206C8B8900E19068 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7035E92D1FF3C43A00944D2D /* SystemConfiguration.framework */; };
 		88BBFE3F206C8B8900E19068 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70DA286C1FA85BA200A56C64 /* AudioToolbox.framework */; };
-		88BBFE40206C8B8900E19068 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70DA286A1FA85B7F00A56C64 /* CoreTelephony.framework */; };
-		88BBFE41206C8B8900E19068 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70DA28661FA85A9B00A56C64 /* VideoToolbox.framework */; };
-		88BBFE42206C8B8900E19068 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70DA28621FA85A6700A56C64 /* AVFoundation.framework */; };
-		88BBFE43206C8B8900E19068 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 70DA28681FA85AE700A56C64 /* libresolv.tbd */; };
-		88BBFE44206C8B8900E19068 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 70DA28641FA85A7D00A56C64 /* libc++.tbd */; };
+		88BBFE4A206C90E900E19068 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70DA28661FA85A9B00A56C64 /* VideoToolbox.framework */; };
+		88BBFE4B206C912D00E19068 /* AgoraSigKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88B7AB9E205A5CA80005DE39 /* AgoraSigKit.framework */; };
+		88BBFE4C206C913300E19068 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70DA286A1FA85B7F00A56C64 /* CoreTelephony.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -206,15 +203,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88BBFE3C206C8B6700E19068 /* AgoraSigKit.framework in Frameworks */,
+				88BBFE4B206C912D00E19068 /* AgoraSigKit.framework in Frameworks */,
 				88BBFE3D206C8B6900E19068 /* AgoraRtcEngineKit.framework in Frameworks */,
+				88BBFE4A206C90E900E19068 /* VideoToolbox.framework in Frameworks */,
 				88BBFE3E206C8B8900E19068 /* SystemConfiguration.framework in Frameworks */,
+				88BBFE4C206C913300E19068 /* CoreTelephony.framework in Frameworks */,
 				88BBFE3F206C8B8900E19068 /* AudioToolbox.framework in Frameworks */,
-				88BBFE40206C8B8900E19068 /* CoreTelephony.framework in Frameworks */,
-				88BBFE41206C8B8900E19068 /* VideoToolbox.framework in Frameworks */,
-				88BBFE42206C8B8900E19068 /* AVFoundation.framework in Frameworks */,
-				88BBFE43206C8B8900E19068 /* libresolv.tbd in Frameworks */,
-				88BBFE44206C8B8900E19068 /* libc++.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -760,8 +754,10 @@
 				);
 				INFOPLIST_FILE = TestAgora/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LINK_WITH_STANDARD_LIBRARIES = NO;
+				MACH_O_TYPE = staticlib;
 				PRODUCT_BUNDLE_IDENTIFIER = ttd.TestAgora;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -789,8 +785,10 @@
 				);
 				INFOPLIST_FILE = TestAgora/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LINK_WITH_STANDARD_LIBRARIES = NO;
+				MACH_O_TYPE = staticlib;
 				PRODUCT_BUNDLE_IDENTIFIER = ttd.TestAgora;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
