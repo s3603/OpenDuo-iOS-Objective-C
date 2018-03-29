@@ -33,23 +33,4 @@
         })
     }
 }
-
-- (UINavigationController *)navigationViewController
-{
-    AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
-    if ([delegate.window.rootViewController isKindOfClass:[UINavigationController class]])
-    {
-        return (UINavigationController *)delegate.window.rootViewController;
-    }
-    else if ([delegate.window.rootViewController isKindOfClass:[UITabBarController class]])
-    {
-        UIViewController *selectVc = [((UITabBarController *)delegate.window.rootViewController) selectedViewController];
-        if ([selectVc isKindOfClass:[UINavigationController class]])
-        {
-            return (UINavigationController *)selectVc;
-        }
-    }
-    return nil;
-}
-
 @end

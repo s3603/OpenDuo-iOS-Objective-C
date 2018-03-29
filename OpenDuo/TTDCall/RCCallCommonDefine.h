@@ -26,24 +26,6 @@ dispatch_async(dispatch_get_main_queue(), block);\
 }
 
 /*!
- 引擎类型
- */
-typedef NS_ENUM(NSInteger, RCCallEngineType) {
-    RCCallEngineNone = 0,
-    /*!
-     声网
-     */
-    RCCallEngineAgora = 1,
-    /*!
-     融云
-     */
-    RCCallEngineRong = 2,
-    /*!
-     Blink
-     */
-    RCCallEngineBlink = 3,
-};
-/*!
  媒体类型
  */
 typedef NS_ENUM(NSInteger, RCCallMediaType) {
@@ -216,32 +198,6 @@ typedef NS_ENUM(NSInteger, RCCallDisconnectReason) {
 };
 
 /*!
- 通话视频参数
- */
-typedef NS_ENUM(NSInteger, RCVideoProfile) {
-    /*!
-     320x240, 15fps, 200kbps
-     */
-    RC_VIDEO_PROFILE_240P = 20,
-    /*!
-     640x360, 15fps, 400kbps
-     */
-    RC_VIDEO_PROFILE_360P = 30,
-    /*!
-     640x480, 15fps, 500kbps
-     */
-    RC_VIDEO_PROFILE_480P = 40,
-    /*!
-     1280x720, 15fps, 1000kbps
-     */
-    RC_VIDEO_PROFILE_720P = 50,
-    /*!
-     默认的视频参数
-     */
-    RC_VIDEO_PROFILE_DEFAULT = RC_VIDEO_PROFILE_360P,
-};
-
-/*!
  通话状态
  */
 typedef NS_ENUM(NSInteger, RCCallStatus) {
@@ -271,6 +227,10 @@ typedef NS_ENUM(NSInteger, RCCallStatus) {
     RCCallHangup = 5,
 };
 
+
+/**
+ cmd命令消息类型
+ */
 typedef NS_ENUM(NSUInteger, TTDCMDMessageType) {
     
     MESSAGE_KICK = 0,
